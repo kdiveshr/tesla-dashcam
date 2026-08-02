@@ -1,0 +1,23 @@
+nav {
+  width: 240px;
+  height: 100%;
+  background: #202124;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  margin-bottom: 30px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  padding: 12px 0;
+}
+
+.active {
+  font-weight: bold;
+}
