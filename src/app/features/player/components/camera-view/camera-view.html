@@ -1,0 +1,27 @@
+<div class="camera-container">
+
+  <h3>
+    {{ label }}
+  </h3>
+
+
+  @if (source) {
+
+    <video
+  #video
+  [src]="source"
+  (loadedmetadata)="onMetadataLoaded()">
+</video>
+
+  }
+
+
+  @else {
+
+    <div class="empty">
+      No video
+    </div>
+
+  }
+
+</div>

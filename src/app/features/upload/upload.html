@@ -1,7 +1,88 @@
-<h2>Upload TeslaCam Folder</h2>
+<section class="upload-page">
 
-<p>
-Welcome to the Tesla Dashcam Viewer.
+  <h2>
+    TeslaCam Import
+  </h2>
 
-The TeslaCam import feature will be implemented in Phase 2.
-</p>
+
+  <input
+    #folderInput
+    type="file"
+    hidden
+    webkitdirectory
+    multiple
+    (change)="onFolderSelected($event)"
+  >
+
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="folderInput.click()">
+
+    Select TeslaCam Folder
+
+  </button>
+
+
+
+  @if (clips.length > 0) {
+
+    <h3>
+      Videos Found:
+      {{ clips.length }}
+    </h3>
+
+
+    <div class="clip-list">
+
+      @for (clip of clips; track clip.fileName) {
+
+        <mat-card class="clip-card">
+
+          <mat-card-title>
+            {{ clip.fileName }}
+          </mat-card-title>
+
+
+          <mat-card-content>
+
+            <p>
+              Camera:
+              {{ clip.camera }}
+            </p>
+
+
+            <p>
+              Type:
+              {{ clip.clipType }}
+            </p>
+
+
+            <p>
+              Path:
+              {{ clip.relativePath }}
+            </p>
+
+
+          </mat-card-content>
+
+        </mat-card>
+
+      }
+
+    </div>
+
+  }
+
+
+  @if (clips.length === 0) {
+
+    <p>
+      No TeslaCam videos imported.
+    </p>
+
+  }
+
+
+</section>

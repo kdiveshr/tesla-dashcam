@@ -1,10 +1,18 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  MatListModule
+} from '@angular/material/list';
+
+import {
+  RouterLink,
+  RouterLinkActive
+} from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
+    MatListModule,
     RouterLink,
     RouterLinkActive,
   ],

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { MatSidenavModule } from '@angular/material/sidenav';
+
 import { Sidebar } from '../sidebar/sidebar';
 import { Toolbar } from '../toolbar/toolbar';
 
@@ -9,6 +11,7 @@ import { Toolbar } from '../toolbar/toolbar';
   standalone: true,
   imports: [
     RouterOutlet,
+    MatSidenavModule,
     Sidebar,
     Toolbar,
   ],

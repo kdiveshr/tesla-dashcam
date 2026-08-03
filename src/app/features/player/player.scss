@@ -1,0 +1,22 @@
+.player {
+
+  width: 100%;
+
+}
+
+
+.controls {
+
+  margin-top: 20px;
+
+}
+
+.camera-grid {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+}

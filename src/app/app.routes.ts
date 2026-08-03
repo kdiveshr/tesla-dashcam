@@ -17,6 +17,11 @@ export const routes: Routes = [
       import('./features/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+  path: 'player',
+  loadComponent: () =>
+    import('./features/player/player').then((m) => m.Player),
+},
+  {
     path: '**',
     redirectTo: 'upload',
   },

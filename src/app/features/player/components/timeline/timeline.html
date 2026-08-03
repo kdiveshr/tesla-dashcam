@@ -1,0 +1,22 @@
+<div class="timeline">
+
+  <div class="time">
+
+    {{ currentTime | number:'1.0-1' }}
+    /
+    {{ duration | number:'1.0-1' }}
+
+  </div>
+
+  <mat-slider
+    min="0"
+    [max]="duration">
+
+    <input
+      matSliderThumb
+      [value]="currentTime"
+      (valueChange)="onSeek($event)" />
+
+  </mat-slider>
+
+</div>

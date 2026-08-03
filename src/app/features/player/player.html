@@ -1,0 +1,77 @@
+<section class="player">
+
+
+<h2>
+Tesla Player
+</h2>
+<app-timeline
+  [currentTime]="currentTime"
+  [duration]="duration"
+  (seek)="seek($event)">
+</app-timeline>
+<div class="controls">
+
+<button
+  (click)="play()">
+
+Play
+
+</button>
+
+
+<button
+  (click)="pause()">
+
+Pause
+
+</button>
+
+</div>
+
+@if (events.length > 0) {
+
+
+<div class="camera-grid">
+
+
+<app-camera-view
+  label="Front"
+  [source]="events[0].front?.url"
+  (metadataLoaded)="registerVideos()">
+</app-camera-view>
+
+
+<app-camera-view
+  label="Left Repeater"
+  [source]="events[0].leftRepeater?.url">
+</app-camera-view>
+
+
+<app-camera-view
+  label="Right Repeater"
+  [source]="events[0].rightRepeater?.url">
+</app-camera-view>
+
+
+<app-camera-view
+  label="Rear"
+  [source]="events[0].back?.url">
+</app-camera-view>
+
+
+</div>
+
+
+}
+
+
+@else {
+
+<p>
+No Tesla clips loaded.
+</p>
+
+}
+
+
+</section>
