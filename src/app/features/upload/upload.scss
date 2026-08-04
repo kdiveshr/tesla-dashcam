@@ -1,28 +1,119 @@
 .upload-page {
-
-  max-width: 900px;
-
+  display: grid;
+  gap: 28px;
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: clamp(24px, 7vw, 84px) 0;
 }
 
-
-button {
-
-  margin-bottom: 24px;
-
+.import-hero {
+  background:
+    radial-gradient(circle at 85% 20%, rgb(68 142 241 / 20%), transparent 20rem),
+    linear-gradient(135deg, rgb(18 38 65 / 96%), rgb(10 20 35 / 96%));
+  border: 1px solid rgb(133 176 229 / 22%);
+  border-radius: 20px;
+  box-shadow: 0 28px 70px rgb(0 0 0 / 25%);
+  overflow: hidden;
+  padding: clamp(28px, 6vw, 66px);
+  position: relative;
 }
 
+.import-hero::after {
+  background: linear-gradient(90deg, transparent, rgb(109 187 255 / 28%), transparent);
+  bottom: 0;
+  content: '';
+  height: 1px;
+  left: 14%;
+  position: absolute;
+  right: 14%;
+}
 
-.clip-list {
+.eyebrow {
+  color: #86beff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin: 0 0 14px;
+}
 
-  display: flex;
-  flex-direction: column;
+h1 {
+  font-size: clamp(34px, 5vw, 62px);
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 690px;
+}
+
+h1 span {
+  color: #82c2ff;
+}
+
+.hero-copy {
+  color: #b4c2d5;
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 24px 0 30px;
+  max-width: 610px;
+}
+
+.import-button {
+  align-items: center;
+  background: linear-gradient(135deg, #6cbaff, #407fee) !important;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgb(52 126 231 / 30%);
+  color: #061222 !important;
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 800;
+  gap: 26px;
+  min-height: 50px;
+  padding: 0 18px 0 22px;
+}
+
+.privacy-note {
+  color: #8090a6;
+  font-size: 12px;
+  margin: 17px 0 0;
+}
+
+.feature-grid {
+  display: grid;
   gap: 16px;
-
+  grid-template-columns: repeat(3, 1fr);
 }
 
+.feature-grid article {
+  background: rgb(16 30 50 / 72%);
+  border: 1px solid rgb(148 163 184 / 13%);
+  border-radius: 14px;
+  padding: 20px;
+}
 
-.clip-card {
+.feature-icon {
+  color: #84c3ff;
+  display: block;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
 
-  padding: 12px;
+.feature-grid h2 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
 
+.feature-grid p {
+  color: #95a5ba;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .import-hero {
+    border-radius: 16px;
+  }
 }

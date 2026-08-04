@@ -1,9 +1,15 @@
 <section class="player">
 
 
-<h2>
-Tesla Player
-</h2>
+<header class="player-header">
+  <div>
+    <p class="eyebrow">EDITING STUDIO</p>
+    <h1>{{ recording?.folderName ?? 'TeslaCam player' }}</h1>
+  </div>
+  @if (recording) {
+    <span class="recording-summary">{{ recording.segments.length }} synced segments</span>
+  }
+</header>
 <app-timeline
   [currentTime]="currentTime"
   [duration]="duration"
@@ -13,6 +19,7 @@ Tesla Player
 <div class="controls">
 
 <button
+  class="primary-control"
   (click)="play()">
 
 Play
@@ -21,6 +28,7 @@ Play
 
 
 <button
+  class="secondary-control"
   (click)="pause()">
 
 Pause

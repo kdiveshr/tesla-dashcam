@@ -4,14 +4,33 @@
 }
 
 mat-nav-list {
-  height: 100%;
-  background: #1f2937;
+  background: transparent;
+  padding: 0 12px;
 }
 
 a {
-  color: white;
+  border-radius: 9px;
+  color: #9aa9c0;
+  margin: 4px 0;
 }
 
 .active {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(90deg, rgb(62 130 221 / 28%), rgb(62 130 221 / 8%));
+  color: #e8f3ff;
+}
+
+.sidebar-brand {
+  color: #60718a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  padding: 28px 28px 12px;
+}
+
+.nav-icon {
+  display: inline-block;
+  font-size: 17px;
+  margin-right: 12px;
+  text-align: center;
+  width: 18px;
 }

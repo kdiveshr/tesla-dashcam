@@ -1,6 +1,10 @@
 .timeline {
+  background: rgb(13 29 49 / 72%);
+  border: 1px solid rgb(148 163 184 / 15%);
+  border-radius: 14px;
   display: grid;
   gap: 10px;
+  padding: 14px;
   width: 100%;
 }
 
@@ -14,20 +18,32 @@
   justify-content: space-between;
 }
 
+.time {
+  color: #dce9f7;
+  font-feature-settings: 'tnum';
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .zoom-controls {
   gap: 8px;
 }
 
 .zoom-controls button {
-  border: 1px solid var(--mat-sys-outline);
-  border-radius: 4px;
-  background: transparent;
-  color: inherit;
+  background: rgb(148 163 184 / 10%);
+  border: 1px solid rgb(148 163 184 / 22%);
+  border-radius: 6px;
+  color: #dce9f7;
   cursor: pointer;
   font-size: 18px;
   height: 28px;
   line-height: 1;
   width: 28px;
+}
+
+.zoom-label {
+  color: #91a4bd;
+  font-size: 11px;
 }
 
 .zoom-controls button:disabled {
@@ -49,7 +65,7 @@ mat-slider {
     90deg,
     transparent 0,
     transparent 59px,
-    color-mix(in srgb, var(--mat-sys-outline) 35%, transparent) 60px
+    rgb(148 163 184 / 16%) 60px
   );
   height: 52px;
   min-width: 100%;
@@ -58,10 +74,10 @@ mat-slider {
 
 .clip {
   align-items: flex-start;
-  background: var(--mat-sys-secondary-container);
-  border: 1px solid var(--mat-sys-outline-variant);
+  background: rgb(49 92 139 / 58%);
+  border: 1px solid rgb(134 184 236 / 32%);
   bottom: 0;
-  color: var(--mat-sys-on-secondary-container);
+  color: #d8ecff;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -76,16 +92,16 @@ mat-slider {
 
 .clip:hover,
 .clip:focus-visible {
-  background: var(--mat-sys-secondary-container);
-  outline: 2px solid var(--mat-sys-primary);
+  background: rgb(67 125 184 / 84%);
+  outline: 2px solid #83c2ff;
   outline-offset: -2px;
   z-index: 1;
 }
 
 .clip.active {
-  background: var(--mat-sys-primary);
-  border-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
+  background: linear-gradient(90deg, #4e9ee8, #72bfff);
+  border-color: #a0d5ff;
+  color: #061626;
   z-index: 2;
 }
 
@@ -96,4 +112,10 @@ mat-slider {
 .clip-time {
   font-size: 11px;
   white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .zoom-label {
+    display: none;
+  }
 }

@@ -1,5 +1,30 @@
-<h2>Dashboard</h2>
+<section class="library-page">
+  <header>
+    <p class="eyebrow">RECORDING LIBRARY</p>
+    <h1>Your imported drives</h1>
+    <p>Each card represents a synchronized TeslaCam recording, not individual camera files.</p>
+  </header>
 
-<p>
-Future playback dashboard.
-</p>
+  @if (recordings.length > 0) {
+    <div class="recording-grid">
+      @for (recording of recordings; track recording.folderName) {
+        <button type="button" class="recording-card" (click)="openRecording(recording)">
+          <span class="recording-type">{{ recording.clipType }}</span>
+          <strong>{{ recording.folderName }}</strong>
+          <span class="recording-date">{{ recording.segments[0]?.timestamp | date:'MMM d, y · h:mm a' }}</span>
+          <span class="recording-meta">
+            {{ recording.segments.length }} segments · {{ getCameraCount(recording) }} cameras
+          </span>
+          <span class="open-studio">Open in studio <span>→</span></span>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <span>◫</span>
+      <h2>No recordings yet</h2>
+      <p>Import a TeslaCam folder to create your first synchronized recording.</p>
+      <a href="/upload">Import footage</a>
+    </div>
+  }
+</section>

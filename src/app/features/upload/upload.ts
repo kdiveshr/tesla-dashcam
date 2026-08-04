@@ -1,20 +1,17 @@
 import { Component } from '@angular/core';
 
 import { TeslaImport } from '../../core/services/tesla-import';
-import { TeslaClip } from '../../core/interfaces/tesla-clip.interface';
 import { TeslaStore } from '../../core/services/tesla-store';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { TeslaEventService } from '../../core/services/tesla-event';
 import { inject } from '@angular/core';
 import { TeslaRecordingService } from '../../core/services/tesla-recording';
 import { Telemetry } from '../../core/services/telemetry';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-upload',
   standalone: true,
   imports: [
     MatButtonModule,
-    MatCardModule,
   ],
   templateUrl: './upload.html',
   styleUrl: './upload.scss',
@@ -24,13 +21,13 @@ private readonly recordingService =
   inject(TeslaRecordingService);
 private readonly telemetry = inject(Telemetry);
 
-  clips: TeslaClip[] = [];
+  isImporting = false;
 
 
  constructor(
   private readonly teslaImport: TeslaImport,
   private readonly teslaStore: TeslaStore,
-  private readonly teslaEventService: TeslaEventService
+  private readonly router: Router,
 ) {}
 
 
@@ -51,6 +48,7 @@ private readonly telemetry = inject(Telemetry);
     const files =
       Array.from(input.files);
 
+    this.isImporting = true;
     void this.telemetry.importFiles(files);
 
 
@@ -58,9 +56,6 @@ private readonly telemetry = inject(Telemetry);
       .importFiles(files)
       .subscribe({
       next: clips => {
-
-  this.clips = clips;
-
 
   this.teslaStore.setClips(clips);
 
@@ -74,32 +69,12 @@ this.teslaStore.setRecordings(
 );
 
 
-if (recordings.length > 0) {
+        this.isImporting = false;
 
-  this.teslaStore.selectRecording(
-    recordings[0]
-  );
-
-}
-console.log(
-  'Tesla recordings',
-  recordings
-);
-
-console.log('Imported clips:', clips);
-  const events =
-    this.teslaEventService.groupClips(
-      clips
-    );
-
-
-  console.log('Grouped events:', events);
-
-
-
-this.teslaStore.setRecordings(
-  recordings
-);
+        if (recordings.length > 0) {
+          this.teslaStore.selectRecording(recordings[0]);
+          void this.router.navigate(['/player']);
+        }
 }
       });
 

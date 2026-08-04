@@ -1,88 +1,47 @@
 <section class="upload-page">
-
-  <h2>
-    TeslaCam Import
-  </h2>
-
-
-  <input
-    #folderInput
-    type="file"
-    hidden
-    webkitdirectory
-    multiple
-    (change)="onFolderSelected($event)"
-  >
-
-
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="folderInput.click()">
-
-    Select TeslaCam Folder
-
-  </button>
-
-
-
-  @if (clips.length > 0) {
-
-    <h3>
-      Videos Found:
-      {{ clips.length }}
-    </h3>
-
-
-    <div class="clip-list">
-
-      @for (clip of clips; track clip.fileName) {
-
-        <mat-card class="clip-card">
-
-          <mat-card-title>
-            {{ clip.fileName }}
-          </mat-card-title>
-
-
-          <mat-card-content>
-
-            <p>
-              Camera:
-              {{ clip.camera }}
-            </p>
-
-
-            <p>
-              Type:
-              {{ clip.clipType }}
-            </p>
-
-
-            <p>
-              Path:
-              {{ clip.relativePath }}
-            </p>
-
-
-          </mat-card-content>
-
-        </mat-card>
-
-      }
-
-    </div>
-
-  }
-
-
-  @if (clips.length === 0) {
-
-    <p>
-      No TeslaCam videos imported.
+  <div class="import-hero">
+    <p class="eyebrow">TESLACAM WORKSPACE</p>
+    <h1>Turn your drive into a <span>studio timeline.</span></h1>
+    <p class="hero-copy">
+      Import a TeslaCam folder to automatically group synchronized camera footage,
+      decode embedded telemetry, and open the first recording in the editing studio.
     </p>
 
-  }
+    <input
+      #folderInput
+      type="file"
+      hidden
+      webkitdirectory
+      multiple
+      (change)="onFolderSelected($event)">
 
+    <button
+      mat-flat-button
+      class="import-button"
+      [disabled]="isImporting"
+      (click)="folderInput.click()">
+      <span>{{ isImporting ? 'Organizing footage…' : 'Choose TeslaCam folder' }}</span>
+      <span aria-hidden="true">→</span>
+    </button>
 
+    <p class="privacy-note">Everything stays on this device. No footage is uploaded.</p>
+  </div>
+
+  <div class="feature-grid" aria-label="Import capabilities">
+    <article>
+      <span class="feature-icon">◫</span>
+      <h2>Grouped recordings</h2>
+      <p>Four camera files become one synchronized event—not a cluttered file list.</p>
+    </article>
+    <article>
+      <span class="feature-icon">⌁</span>
+      <h2>Frame telemetry</h2>
+      <p>Speed, GPS, steering, pedals, and FSD state are decoded from the video.</p>
+    </article>
+    <article>
+      <span class="feature-icon">◉</span>
+      <h2>Browser native</h2>
+      <p>Review and edit locally in a responsive workspace, on desktop or mobile.</p>
+    </article>
+  </div>
 </section>

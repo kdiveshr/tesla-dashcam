@@ -1,25 +1,56 @@
-.camera-container {
-
-  background: black;
-  color: white;
-  padding: 8px;
-
+:host {
+  display: block;
+  min-width: 0;
 }
 
+.camera-container {
+  background: #050a12;
+  border: 1px solid rgb(148 163 184 / 16%);
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgb(0 0 0 / 20%);
+  color: white;
+  overflow: hidden;
+}
+
+h3 {
+  color: #aebfd3;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin: 0;
+  padding: 10px 12px;
+  text-transform: uppercase;
+}
 
 video {
-
-  width: 100%;
+  background: #000;
   display: block;
-
+  max-height: 42vh;
+  object-fit: contain;
+  width: 100%;
 }
 
-
 .empty {
-
-  height: 200px;
-  display: flex;
   align-items: center;
+  background: linear-gradient(135deg, #0b1727, #08111f);
+  color: #71829a;
+  display: flex;
+  height: 200px;
   justify-content: center;
+}
 
+@media (max-width: 700px) {
+  h3 {
+    font-size: 9px;
+    padding: 7px 8px;
+  }
+
+  video {
+    max-height: 27vh;
+  }
+
+  .empty {
+    font-size: 12px;
+    height: 100px;
+  }
 }

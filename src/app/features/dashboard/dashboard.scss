@@ -1,0 +1,109 @@
+.library-page {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.eyebrow {
+  color: #86beff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+
+header > p:last-child {
+  color: #9eafc5;
+  margin: 10px 0 30px;
+}
+
+.recording-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.recording-card {
+  background: linear-gradient(145deg, rgb(20 41 68 / 90%), rgb(12 25 43 / 90%));
+  border: 1px solid rgb(148 163 184 / 17%);
+  border-radius: 14px;
+  color: #e8edf5;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 190px;
+  padding: 20px;
+  text-align: left;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.recording-card:hover,
+.recording-card:focus-visible {
+  border-color: rgb(115 190 255 / 65%);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+.recording-card strong {
+  font-size: 16px;
+  margin-top: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recording-type {
+  color: #8bc8ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.recording-date,
+.recording-meta {
+  color: #98a9be;
+  font-size: 12px;
+  margin-top: 7px;
+}
+
+.open-studio {
+  color: #a3d5ff;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: auto;
+}
+
+.open-studio span {
+  font-size: 16px;
+  margin-left: 5px;
+}
+
+.empty-state {
+  background: rgb(15 29 48 / 65%);
+  border: 1px dashed rgb(148 163 184 / 25%);
+  border-radius: 16px;
+  color: #9eafc5;
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.empty-state > span {
+  color: #86beff;
+  font-size: 32px;
+}
+
+.empty-state h2 {
+  color: #e8edf5;
+  margin-bottom: 6px;
+}
+
+.empty-state a {
+  color: #8dcbff;
+  font-weight: 700;
+}

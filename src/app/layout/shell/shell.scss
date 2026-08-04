@@ -3,16 +3,35 @@
 }
 
 mat-sidenav {
-  width: 240px;
-  background: #1f2937;
+  width: 248px;
+  background: #0c1728;
+  border-right: 1px solid rgb(148 163 184 / 14%);
 }
 
 mat-sidenav-content {
-  background: #f5f5f5;
+  background:
+    radial-gradient(circle at 85% 0%, rgb(43 109 180 / 16%), transparent 26rem),
+    #08111f;
 }
 
 .content {
-  padding: 24px;
+  margin: 0 auto;
+  max-width: 1680px;
+  padding: 32px;
   height: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .container {
+    height: calc(100vh - 112px);
+  }
+
+  mat-sidenav {
+    display: none;
+  }
+
+  .content {
+    padding: 20px 16px;
+  }
 }

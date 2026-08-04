@@ -5,6 +5,7 @@
     </div>
 
     <div class="zoom-controls" aria-label="Timeline zoom">
+      <span class="zoom-label">Timeline zoom</span>
       <button type="button" (click)="zoomOut()" [disabled]="zoom <= 0.5">−</button>
       <span>{{ zoom }}×</span>
       <button type="button" (click)="zoomIn()" [disabled]="zoom >= 8">+</button>

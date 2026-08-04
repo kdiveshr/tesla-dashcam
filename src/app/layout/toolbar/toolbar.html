@@ -1,5 +1,14 @@
 <mat-toolbar>
+  <a class="brand" routerLink="/upload" aria-label="TeslaCam Studio home">
+    <span class="brand-mark">T</span>
+    <span>TeslaCam <strong>Studio</strong></span>
+  </a>
 
-  <span>Tesla Dashcam Viewer</span>
+  <nav class="mobile-nav" aria-label="Primary navigation">
+    <a routerLink="/upload" routerLinkActive="active">Import</a>
+    <a routerLink="/dashboard" routerLinkActive="active">Library</a>
+    <a routerLink="/player" routerLinkActive="active">Studio</a>
+  </nav>
 
+  <span class="local-badge">Local processing</span>
 </mat-toolbar>
