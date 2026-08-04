@@ -28,7 +28,7 @@ Pause
 
 </div>
 
-@if (events.length > 0) {
+@if (recording && recording.segments.length > 0) {
 
 
 <div class="camera-grid">
@@ -36,26 +36,29 @@ Pause
 
 <app-camera-view
   label="Front"
-  [source]="events[0].front?.url"
-  (metadataLoaded)="registerVideos()">
+  [source]="frontSegments[currentSegment]?.url"
+  (ended)="nextSegment()"
+  (metadataLoaded)="onCameraLoaded()"
+  >
 </app-camera-view>
-
 
 <app-camera-view
   label="Left Repeater"
-  [source]="events[0].leftRepeater?.url">
+  (metadataLoaded)="onCameraLoaded()"
+  [source]="leftSegments[currentSegment]?.url">
 </app-camera-view>
-
 
 <app-camera-view
   label="Right Repeater"
-  [source]="events[0].rightRepeater?.url">
+  (metadataLoaded)="onCameraLoaded()"
+  [source]="rightSegments[currentSegment]?.url">
 </app-camera-view>
 
 
 <app-camera-view
   label="Rear"
-  [source]="events[0].back?.url">
+  (metadataLoaded)="onCameraLoaded()"
+  [source]="rearSegments[currentSegment]?.url">
 </app-camera-view>
 
 

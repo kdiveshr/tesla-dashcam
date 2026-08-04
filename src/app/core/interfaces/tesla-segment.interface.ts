@@ -9,7 +9,7 @@ export interface TeslaSegment {
 
   front?: TeslaClip;
 
-  rear?: TeslaClip;
+  back?: TeslaClip;
 
   leftRepeater?: TeslaClip;
 

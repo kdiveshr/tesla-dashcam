@@ -6,6 +6,8 @@ import { TeslaStore } from '../../core/services/tesla-store';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TeslaEventService } from '../../core/services/tesla-event';
+import { inject } from '@angular/core';
+import { TeslaRecordingService } from '../../core/services/tesla-recording';
 @Component({
   selector: 'app-upload',
   standalone: true,
@@ -17,7 +19,8 @@ import { TeslaEventService } from '../../core/services/tesla-event';
   styleUrl: './upload.scss',
 })
 export class Upload {
-
+private readonly recordingService =
+  inject(TeslaRecordingService);
 
   clips: TeslaClip[] = [];
 
@@ -55,9 +58,29 @@ export class Upload {
   this.clips = clips;
 
 
-  this.teslaStore.setClips(
-    clips
+  this.teslaStore.setClips(clips);
+
+
+const recordings =
+  this.recordingService.buildRecordings(clips);
+
+
+this.teslaStore.setRecordings(
+  recordings
+);
+
+
+if (recordings.length > 0) {
+
+  this.teslaStore.selectRecording(
+    recordings[0]
   );
+
+}
+console.log(
+  'Tesla recordings',
+  recordings
+);
 
 console.log('Imported clips:', clips);
   const events =
@@ -68,8 +91,11 @@ console.log('Imported clips:', clips);
 
   console.log('Grouped events:', events);
 
-this.teslaStore.setEvents(events);
 
+
+this.teslaStore.setRecordings(
+  recordings
+);
 }
       });
 

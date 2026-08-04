@@ -7,11 +7,16 @@
 
   @if (source) {
 
-    <video
+  
+
+  <video
   #video
   [src]="source"
-  (loadedmetadata)="onMetadataLoaded()">
+  (loadedmetadata)="onMetadataLoaded()"
+  (ended)="onEnded()">
 </video>
+
+
 
   }
 

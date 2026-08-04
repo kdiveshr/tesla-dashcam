@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+
+import {
+  BehaviorSubject,
+  Observable,
+} from 'rxjs';
 
 import { TeslaClip } from '../interfaces/tesla-clip.interface';
-import { TeslaEvent } from '../interfaces/tesla-event.interface';
+import { TeslaRecording } from '../interfaces/tesla-recording.interface';
 
 
 @Injectable({
@@ -15,18 +19,26 @@ export class TeslaStore {
     new BehaviorSubject<TeslaClip[]>([]);
 
 
-  private readonly eventsSubject =
-    new BehaviorSubject<TeslaEvent[]>([]);
-
-
-
   readonly clips$: Observable<TeslaClip[]> =
     this.clipsSubject.asObservable();
 
 
 
-  readonly events$: Observable<TeslaEvent[]> =
-    this.eventsSubject.asObservable();
+  private readonly recordingsSubject =
+    new BehaviorSubject<TeslaRecording[]>([]);
+
+
+  readonly recordings$: Observable<TeslaRecording[]> =
+    this.recordingsSubject.asObservable();
+
+
+
+  private readonly selectedRecordingSubject =
+    new BehaviorSubject<TeslaRecording | null>(null);
+
+
+  readonly selectedRecording$ =
+    this.selectedRecordingSubject.asObservable();
 
 
 
@@ -40,13 +52,26 @@ export class TeslaStore {
 
 
 
-  setEvents(
-    events: TeslaEvent[]
+
+  setRecordings(
+    recordings: TeslaRecording[]
   ): void {
 
-    this.eventsSubject.next(events);
+    this.recordingsSubject.next(recordings);
 
   }
+
+
+
+
+  selectRecording(
+    recording: TeslaRecording
+  ): void {
+
+    this.selectedRecordingSubject.next(recording);
+
+  }
+
 
 
 
@@ -54,9 +79,10 @@ export class TeslaStore {
 
     this.clipsSubject.next([]);
 
-    this.eventsSubject.next([]);
+    this.recordingsSubject.next([]);
+
+    this.selectedRecordingSubject.next(null);
 
   }
-
 
 }

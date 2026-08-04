@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-
-
+import { PlaybackSegment } from '../models/playback-segment';
+import { TeslaEvent } from '../interfaces/tesla-event.interface';
+import { BehaviorSubject } from 'rxjs';
+import { TeslaRecording } from '../interfaces/tesla-recording.interface';
 @Injectable({
   providedIn: 'root',
 })
@@ -8,8 +10,21 @@ export class Playback {
 
 private syncInterval?: number;
   private videos: HTMLVideoElement[] = [];
+private segments: PlaybackSegment[] = [];
+
+private totalDuration = 0;
+private events: TeslaEvent[] = [];
+private recording?: TeslaRecording;
+
+private currentSegment = 0;
 
 
+private currentSegmentSubject =
+  new BehaviorSubject<number>(0);
+
+
+readonly currentSegment$ =
+  this.currentSegmentSubject.asObservable();
 
   registerVideos(
     videos: HTMLVideoElement[]
@@ -157,9 +172,131 @@ private stopSync(): void {
 
   clear(): void {
 
-    this.videos = [];
+  this.videos = [];
+
+  this.events = [];
+
+  this.segments = [];
+
+  this.currentSegmentSubject.next(0);
+
+}
+buildTimeline(events: TeslaEvent[]) {
+
+
+  this.events = events;
+
+
+  this.segments = [];
+
+
+  let current = 0;
+
+
+  events.forEach((event,index)=>{
+
+
+    this.segments.push({
+
+      index,
+
+      start: current,
+
+      duration: 60
+
+    });
+
+
+    current += 60;
+
+
+  });
+
+
+  this.totalDuration = current;
+
+
+  console.log(
+    'Playback timeline',
+    this.segments
+  );
+
+}
+nextSegment(): boolean {
+
+  if (!this.recording) {
+
+    return false;
 
   }
 
+  if (
+    this.currentSegment >=
+    this.recording.segments.length - 1
+  ) {
 
+    console.log(
+      'Recording finished'
+    );
+
+    return false;
+
+  }
+
+  this.currentSegment++;
+
+  this.currentSegmentSubject.next(
+    this.currentSegment
+  );
+
+  return true;
+
+}
+
+
+
+getSegmentEvent(
+  index:number
+): TeslaEvent | undefined {
+
+
+  return this.events[index];
+
+}
+
+
+
+getDuration(): number {
+
+
+  return this.totalDuration;
+
+
+}
+loadRecording(
+  recording: TeslaRecording
+): void {
+
+  this.recording = recording;
+
+  this.currentSegment = 0;
+
+  this.buildTimeline(
+    recording.segments
+  );
+
+}
+getCurrentEvent():
+  TeslaEvent | undefined {
+
+  return this.recording?.segments[
+    this.currentSegment
+  ];
+
+}
+getCurrentSegment(): number {
+
+  return this.currentSegment;
+
+}
 }
