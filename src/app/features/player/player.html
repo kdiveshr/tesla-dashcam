@@ -7,6 +7,7 @@ Tesla Player
 <app-timeline
   [currentTime]="currentTime"
   [duration]="duration"
+  [clips]="timelineClips"
   (seek)="seek($event)">
 </app-timeline>
 <div class="controls">
@@ -31,37 +32,42 @@ Pause
 @if (recording && recording.segments.length > 0) {
 
 
-<div class="camera-grid">
+<div class="player-stage">
+  <div class="camera-grid">
 
 
 <app-camera-view
   label="Front"
-  [source]="frontSegments[currentSegment]?.url"
+  [source]="frontSource"
   (ended)="nextSegment()"
   (metadataLoaded)="onCameraLoaded()"
+  (timeUpdated)="onMasterTimeUpdated($event)"
   >
 </app-camera-view>
 
 <app-camera-view
   label="Left Repeater"
   (metadataLoaded)="onCameraLoaded()"
-  [source]="leftSegments[currentSegment]?.url">
+  [source]="leftSource">
 </app-camera-view>
 
 <app-camera-view
   label="Right Repeater"
   (metadataLoaded)="onCameraLoaded()"
-  [source]="rightSegments[currentSegment]?.url">
+  [source]="rightSource">
 </app-camera-view>
 
 
 <app-camera-view
   label="Rear"
   (metadataLoaded)="onCameraLoaded()"
-  [source]="rearSegments[currentSegment]?.url">
+  [source]="rearSource">
 </app-camera-view>
 
 
+</div>
+
+  <app-telemetry-hud [sample]="telemetrySample" />
 </div>
 
 

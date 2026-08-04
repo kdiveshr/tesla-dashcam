@@ -1,0 +1,69 @@
+.telemetry-hud {
+  backdrop-filter: blur(8px);
+  background: rgb(9 16 24 / 82%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 8px;
+  color: #f8fbff;
+  display: grid;
+  gap: 10px;
+  max-width: 290px;
+  padding: 12px;
+}
+
+.speed {
+  align-items: baseline;
+  display: flex;
+  gap: 6px;
+}
+
+.speed strong {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.speed span,
+dt {
+  color: #b8c4d1;
+  font-size: 12px;
+}
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  background: rgb(255 255 255 / 14%);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 6px;
+}
+
+.autopilot {
+  background: #1b5e9d;
+}
+
+.signal,
+dd.active {
+  color: #ffd460;
+}
+
+dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+dl div {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+dd {
+  font-size: 12px;
+  margin: 0;
+}

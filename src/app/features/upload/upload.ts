@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { TeslaEventService } from '../../core/services/tesla-event';
 import { inject } from '@angular/core';
 import { TeslaRecordingService } from '../../core/services/tesla-recording';
+import { Telemetry } from '../../core/services/telemetry';
 @Component({
   selector: 'app-upload',
   standalone: true,
@@ -21,6 +22,7 @@ import { TeslaRecordingService } from '../../core/services/tesla-recording';
 export class Upload {
 private readonly recordingService =
   inject(TeslaRecordingService);
+private readonly telemetry = inject(Telemetry);
 
   clips: TeslaClip[] = [];
 
@@ -48,6 +50,8 @@ private readonly recordingService =
 
     const files =
       Array.from(input.files);
+
+    void this.telemetry.importFiles(files);
 
 
     this.teslaImport

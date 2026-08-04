@@ -1,0 +1,43 @@
+@if (sample) {
+  <aside class="telemetry-hud" aria-label="Live vehicle telemetry">
+    <div class="speed">
+      <strong>{{ speedKph ?? '—' }}</strong>
+      <span>km/h</span>
+    </div>
+
+    <div class="status-row">
+      <span class="badge">{{ sample.gear?.toUpperCase() ?? '—' }}</span>
+      @if (autopilotLabel) {
+        <span class="badge autopilot">{{ autopilotLabel }}</span>
+      }
+      @if (turnSignalLabel) {
+        <span class="badge signal">{{ turnSignalLabel }}</span>
+      }
+    </div>
+
+    <dl>
+      <div>
+        <dt>Steering</dt>
+        <dd>{{ sample.steeringAngleDegrees ?? 0 | number:'1.0-1' }}°</dd>
+      </div>
+      <div>
+        <dt>Accelerator</dt>
+        <dd>{{ sample.acceleratorPedal ?? 0 | number:'1.0-2' }}</dd>
+      </div>
+      <div>
+        <dt>Brake</dt>
+        <dd [class.active]="sample.brakeApplied">{{ sample.brakeApplied ? 'ON' : 'OFF' }}</dd>
+      </div>
+      <div>
+        <dt>GPS</dt>
+        <dd>
+          @if (sample.latitude !== undefined && sample.longitude !== undefined) {
+            {{ sample.latitude | number:'1.4-4' }}, {{ sample.longitude | number:'1.4-4' }}
+          } @else {
+            —
+          }
+        </dd>
+      </div>
+    </dl>
+  </aside>
+}

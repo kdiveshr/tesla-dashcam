@@ -1,22 +1,37 @@
-<div class="timeline">
+<section class="timeline" aria-label="Recording timeline">
+  <div class="timeline-header">
+    <div class="time">
+      {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+    </div>
 
-  <div class="time">
-
-    {{ currentTime | number:'1.0-1' }}
-    /
-    {{ duration | number:'1.0-1' }}
-
+    <div class="zoom-controls" aria-label="Timeline zoom">
+      <button type="button" (click)="zoomOut()" [disabled]="zoom <= 0.5">−</button>
+      <span>{{ zoom }}×</span>
+      <button type="button" (click)="zoomIn()" [disabled]="zoom >= 8">+</button>
+    </div>
   </div>
 
-  <mat-slider
-    min="0"
-    [max]="duration">
-
-    <input
-      matSliderThumb
-      [value]="currentTime"
-      (valueChange)="onSeek($event)" />
-
+  <mat-slider min="0" [max]="duration" [disabled]="duration === 0">
+    <input matSliderThumb [value]="currentTime" (valueChange)="onSeek($event)" />
   </mat-slider>
 
-</div>
+  <div class="clip-scroll">
+    <div class="clip-track" [style.width.px]="trackWidth">
+      @for (clip of clips; track clip.index) {
+        <button
+          type="button"
+          class="clip"
+          [class.active]="isActive(clip)"
+          [style.left.px]="clip.start * pixelsPerSecond"
+          [style.width.px]="getClipWidth(clip)"
+          [title]="(clip.timestamp | date:'medium') + ' — ' + (clip.duration | number:'1.0-1') + ' seconds'"
+          (click)="selectClip(clip)">
+          <span class="clip-index">{{ clip.index + 1 }}</span>
+          @if (clip.duration * pixelsPerSecond >= 92) {
+            <span class="clip-time">{{ clip.timestamp | date:'HH:mm:ss' }}</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+</section>

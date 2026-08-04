@@ -26,6 +26,8 @@ export class CameraView {
 metadataLoaded = new EventEmitter<void>();
 @Output()
 ended = new EventEmitter<void>();
+  @Output()
+  timeUpdated = new EventEmitter<number>();
   @Input()
   source?: string;
 
@@ -58,5 +60,13 @@ onMetadataLoaded(): void {
   this.metadataLoaded.emit();
 
 }
+
+  onTimeUpdate(): void {
+    const currentTime = this.getVideoElement()?.currentTime;
+
+    if (currentTime !== undefined) {
+      this.timeUpdated.emit(currentTime);
+    }
+  }
 
 }

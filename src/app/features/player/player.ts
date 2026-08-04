@@ -1,306 +1,245 @@
 import {
+  AfterViewInit,
   Component,
   OnDestroy,
   OnInit,
   QueryList,
   ViewChildren,
 } from '@angular/core';
-
 import { Subscription } from 'rxjs';
-import { Timeline } from './components/timeline/timeline';
-import { TeslaStore } from '../../core/services/tesla-store';
-import { Playback } from '../../core/services/playback';
-import { TeslaClip } 
-from '../../core/interfaces/tesla-clip.interface';
-import {
-  TeslaEvent,
-} from '../../core/interfaces/tesla-event.interface';
 
+import { Playback } from '../../core/services/playback';
+import { TeslaStore } from '../../core/services/tesla-store';
+import { Telemetry } from '../../core/services/telemetry';
+import { TeslaRecording } from '../../core/interfaces/tesla-recording.interface';
+import { TeslaTelemetrySample } from '../../core/interfaces/tesla-telemetry.interface';
 import { CameraView } from './components/camera-view/camera-view';
-import { TeslaRecording } 
-from '../../core/interfaces/tesla-recording.interface';
+import { TelemetryHud } from './components/telemetry-hud/telemetry-hud';
+import { Timeline, TimelineClip } from './components/timeline/timeline';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [
-    CameraView,
-    Timeline,
-  ],
+  imports: [CameraView, TelemetryHud, Timeline],
   templateUrl: './player.html',
   styleUrl: './player.scss',
 })
-export class Player implements OnInit, OnDestroy {
-frontSegments: TeslaClip[] = [];
-private loadedVideos = 0;
-
-private readonly expectedVideos = 4;
-leftSegments: TeslaClip[] = [];
-frontSource?: string;
-
-leftSource?: string;
-
-rightSource?: string;
-
-rearSource?: string;
-rightSegments: TeslaClip[] = [];
-
-rearSegments: TeslaClip[] = [];
-recording?: TeslaRecording;
-private timer?: number;
-segments: TeslaEvent[] = [];
-
-  private subscription?: Subscription;
-
-
+export class Player implements OnInit, AfterViewInit, OnDestroy {
+  recording?: TeslaRecording;
+  frontSource?: string;
+  leftSource?: string;
+  rightSource?: string;
+  rearSource?: string;
+  currentTime = 0;
+  duration = 0;
+  timelineClips: TimelineClip[] = [];
+  telemetrySample?: TeslaTelemetrySample;
 
   @ViewChildren(CameraView)
   cameras!: QueryList<CameraView>;
 
-currentTime = 0;
-currentSegment = 0;
-duration = 0;
+  private subscription?: Subscription;
+  private telemetrySubscription?: Subscription;
+  private timer?: number;
+  private loadedVideos = 0;
+  private pendingSeekTime?: number;
+  private resumeAfterLoad = false;
+  private recordingLoadId = 0;
 
   constructor(
     private readonly teslaStore: TeslaStore,
     private readonly playback: Playback,
+    private readonly telemetry: Telemetry,
   ) {}
 
-
-
   ngOnInit(): void {
-
-
-    this.subscription =
-  this.teslaStore.selectedRecording$
-    .subscribe(recording => {
-
-
-      if (recording) {
-
-
-        console.log(
-          'PLAYER RECORDING',
-          recording
-        );
-
-
-        this.recording =
-          recording;
-if(recording){
-
-this.frontSegments =
- recording.segments
- .map(s => s.front)
- .filter(
-   (x): x is TeslaClip => !!x
- );
-
-
-this.leftSegments =
- recording.segments
- .map(s => s.leftRepeater)
- .filter(
-   (x): x is TeslaClip => !!x
- );
-
-
-this.rightSegments =
- recording.segments
- .map(s => s.rightRepeater)
- .filter(
-   (x): x is TeslaClip => !!x
- );
-
-
-this.rearSegments =
- recording.segments
- .map(s => s.back)
- .filter(
-   (x): x is TeslaClip => !!x
- );
-
-
-}
-
-        this.segments =
-          recording.segments;
-
-
-        this.playback.loadRecording(
-  recording
-);
-this.updateCurrentSources();
-
-
-      }
-
-
+    this.telemetrySubscription = this.telemetry.samples$.subscribe(() => {
+      this.updateTelemetry();
     });
 
+    this.subscription = this.teslaStore.selectedRecording$.subscribe(recording => {
+      if (!recording) {
+        this.recording = undefined;
+        this.clearSources();
+        return;
+      }
 
+      this.recording = recording;
+      this.telemetrySample = undefined;
+      void this.telemetry.importRecording(recording);
+      this.loadedVideos = 0;
+      this.pendingSeekTime = undefined;
+      this.resumeAfterLoad = false;
+      const loadId = ++this.recordingLoadId;
+      void this.playback.loadRecording(recording).then(() => {
+        if (loadId === this.recordingLoadId) {
+          this.duration = this.playback.getDuration();
+          this.refreshTimelineClips();
+        }
+      });
+      this.duration = 0;
+      this.currentTime = 0;
+      this.refreshTimelineClips();
+      this.updateCurrentSources();
+    });
   }
-
-nextSegment(): void {
-
-  const moved =
-    this.playback.nextSegment();
-
-  if (!moved) {
-    return;
-  }
-
-  this.updateCurrentSources();
-
-  this.loadedVideos = 0;
-
-}
-
-
-seek(time: number): void {
-
-  this.currentTime = time;
-
-  this.playback.seek(time);
-
-}
 
   ngAfterViewInit(): void {
-
-
-    this.cameras.changes
-      .subscribe(() => {
-
-        this.registerVideos();
-
-      });
-
-
+    this.cameras.changes.subscribe(() => this.registerVideos());
     this.registerVideos();
-
   }
 
-
-
-
- registerVideos(): void {
-
-  const cameraViews = this.cameras.toArray();
-
-  const videos = cameraViews
-    .map(camera => camera.getVideoElement())
-    .filter(
-      (video): video is HTMLVideoElement => !!video
-    );
-
-  this.playback.registerVideos(videos);
-
-  // Use the Front camera as the master duration.
-  this.duration = this.playback.getDuration();
-
-}
-
-
-
-private startTimeline(): void {
-
-  if (this.timer) {
-    clearInterval(this.timer);
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.telemetrySubscription?.unsubscribe();
+    this.stopTimeline();
+    this.playback.clear();
   }
 
-  this.timer = window.setInterval(() => {
+  play(): void {
+    void this.playback.play();
+    this.startTimeline();
+  }
 
-    const master =
-      this.cameras.first?.getVideoElement();
+  pause(): void {
+    this.playback.pause();
+    this.stopTimeline();
+  }
 
-    if (!master) {
+  seek(time: number): void {
+    const position = this.playback.seek(time);
+
+    if (!position) {
       return;
     }
 
-    this.currentTime =
-      this.currentSegment * 60 +
-      master.currentTime;
+    this.currentTime = this.playback.getCurrentTime(position.localTime);
 
-  }, 100);
+    if (position.segmentChanged) {
+      this.pause();
+      this.pendingSeekTime = position.localTime;
+      this.updateTelemetry();
+      this.updateCurrentSources();
+      return;
+    }
 
-}
-
-  ngOnDestroy(): void {
-
-    this.subscription?.unsubscribe();
-
-    this.playback.clear();
-    if (this.timer) {
-  clearInterval(this.timer);
-}
-
+    this.updateTelemetry();
   }
+
+  nextSegment(): void {
+    const shouldResume = this.playback.isPlaying();
+
+    if (!this.playback.nextSegment()) {
+      this.pause();
+      return;
+    }
+
+    this.playback.pause();
+    this.stopTimeline();
+    this.resumeAfterLoad = shouldResume;
+    this.loadedVideos = 0;
+    this.updateCurrentSources();
+  }
+
   onCameraLoaded(): void {
+    this.loadedVideos++;
 
-  this.loadedVideos++;
-
-  console.log(
-    'Video loaded',
-    this.loadedVideos,
-    '/',
-    this.expectedVideos
-  );
-
-  if (this.loadedVideos === this.expectedVideos) {
-
-    console.log('All videos ready');
+    if (this.loadedVideos < this.getSourceCount()) {
+      return;
+    }
 
     this.loadedVideos = 0;
-
     this.registerVideos();
+    const masterDuration = this.cameras
+      .toArray()
+      .map(camera => camera.getDuration())
+      .find(duration => duration > 0);
 
-    this.play();
+    if (masterDuration) {
+      this.playback.setCurrentSegmentDuration(masterDuration);
+      this.duration = this.playback.getDuration();
+      this.refreshTimelineClips();
+    }
 
+    if (this.pendingSeekTime !== undefined) {
+      this.playback.seekVideos(this.pendingSeekTime);
+      this.currentTime = this.playback.getCurrentTime(this.pendingSeekTime);
+      this.pendingSeekTime = undefined;
+    }
+
+    if (this.resumeAfterLoad) {
+      this.resumeAfterLoad = false;
+      this.play();
+    }
   }
 
-}
-
-play(): void {
-
-  this.playback.play();
-  this.startTimeline();
-
-}
-
-
-pause(): void {
-
-  this.playback.pause();
-  if (this.timer) {
-  clearInterval(this.timer);
-}
-
-}private getCurrentEvent(): TeslaEvent | undefined {
-
-  return this.playback.getCurrentEvent();
-
-}
-
-private updateCurrentSources(): void {
-
-  const event =
-    this.getCurrentEvent();
-
-  if (!event) {
-    return;
+  onMasterTimeUpdated(localTime: number): void {
+    this.currentTime = this.playback.getCurrentTime(localTime);
+    this.updateTelemetry();
   }
 
-  this.frontSource = event.front?.url;
+  private registerVideos(): void {
+    const videos = this.cameras
+      .toArray()
+      .map(camera => camera.getVideoElement())
+      .filter((video): video is HTMLVideoElement => !!video);
 
-  this.leftSource =
-    event.leftRepeater?.url;
+    this.playback.registerVideos(videos);
+  }
 
-  this.rightSource =
-    event.rightRepeater?.url;
+  private updateCurrentSources(): void {
+    const event = this.playback.getCurrentEvent();
+    this.frontSource = event?.front?.url;
+    this.leftSource = event?.leftRepeater?.url;
+    this.rightSource = event?.rightRepeater?.url;
+    this.rearSource = event?.back?.url;
+  }
 
-  this.rearSource =
-    event.back?.url;
+  private clearSources(): void {
+    this.frontSource = undefined;
+    this.leftSource = undefined;
+    this.rightSource = undefined;
+    this.rearSource = undefined;
+  }
 
-}
+  private refreshTimelineClips(): void {
+    const segments = this.playback.getTimelineSegments();
 
+    this.timelineClips = segments.map(segment => ({
+      ...segment,
+      timestamp: this.recording?.segments[segment.index]?.timestamp ?? new Date(0),
+    }));
+  }
+
+  private getSourceCount(): number {
+    return [
+      this.frontSource,
+      this.leftSource,
+      this.rightSource,
+      this.rearSource,
+    ].filter((source): source is string => !!source).length;
+  }
+
+  private updateTelemetry(): void {
+    this.telemetrySample = this.telemetry.getSampleAtPlaybackTime(this.currentTime);
+  }
+
+  private startTimeline(): void {
+    this.stopTimeline();
+    this.timer = window.setInterval(() => {
+      const master = this.cameras.first?.getVideoElement();
+
+      if (master) {
+        this.currentTime = this.playback.getCurrentTime(master.currentTime);
+        this.updateTelemetry();
+      }
+    }, 100);
+  }
+
+  private stopTimeline(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = undefined;
+    }
+  }
 }
