@@ -185,7 +185,7 @@ export class TeslaSei {
       acceleratorPedal: fields.get(5),
       steeringAngleDegrees: fields.get(6),
       turnSignal: this.getTurnSignal(left, right),
-      brakeApplied: fields.get(9) === 1 ? true : undefined,
+      brakeApplied: fields.get(9) === 1,
       autopilot: this.getAutopilot(fields.get(10)),
       gear: this.getGear(fields.get(2)),
       latitude: fields.get(11),

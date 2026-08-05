@@ -2,11 +2,15 @@
   width: 100%;
 }
 
+.studio-row {
+  margin-bottom: 12px;
+}
+
 .player-header {
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 12px;
 }
 
 .eyebrow {
@@ -67,13 +71,24 @@ h1 {
 }
 
 .player-stage {
+  display: grid;
+  gap: 16px;
   position: relative;
 }
 
-app-telemetry-hud {
+.camera-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.front-panel {
+  position: relative;
+}
+
+.front-panel app-fsd-path-overlay {
   position: absolute;
-  right: 16px;
-  top: 16px;
+  inset: 0;
   z-index: 2;
 }
 
@@ -86,10 +101,5 @@ app-telemetry-hud {
 
   .camera-grid {
     gap: 8px;
-  }
-
-  app-telemetry-hud {
-    right: 8px;
-    top: 8px;
   }
 }

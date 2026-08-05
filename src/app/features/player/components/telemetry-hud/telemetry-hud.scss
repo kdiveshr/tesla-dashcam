@@ -1,29 +1,60 @@
 .telemetry-hud {
   backdrop-filter: blur(8px);
   background: rgb(9 16 24 / 82%);
-  border: 1px solid rgb(255 255 255 / 20%);
-  border-radius: 8px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgb(8 12 20 / 38%);
   color: #f8fbff;
   display: grid;
   gap: 10px;
-  max-width: 290px;
-  padding: 12px;
+  max-width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.speed {
+.hud-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.speed-block {
   align-items: baseline;
   display: flex;
   gap: 6px;
 }
 
-.speed strong {
-  font-size: 32px;
+.speed-block strong {
+  font-size: clamp(20px, 2vw, 28px);
   line-height: 1;
 }
 
-.speed span,
+.speed-block span,
+.label,
 dt {
   color: #b8c4d1;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mini-metrics {
+  display: flex;
+  gap: 6px;
+}
+
+.mini-card {
+  background: rgb(255 255 255 / 7%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  display: grid;
+  min-width: 74px;
+  padding: 5px 8px;
+}
+
+.mini-card strong {
   font-size: 12px;
 }
 
@@ -36,7 +67,7 @@ dt {
 .badge {
   background: rgb(255 255 255 / 14%);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   padding: 3px 6px;
 }
@@ -50,20 +81,143 @@ dd.active {
   color: #ffd460;
 }
 
-dl {
-  display: grid;
-  gap: 7px;
-  margin: 0;
+.steering-panel {
+  align-items: center;
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
 }
 
-dl div {
-  align-items: baseline;
+.steering-wheel {
+  align-items: center;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  transition: transform 120ms ease-out;
+  width: 44px;
+}
+
+.wheel-ring {
+  align-items: center;
+  background: radial-gradient(circle, rgb(18 29 37) 0%, rgb(10 18 27) 62%, rgb(24 33 43) 100%);
+  border: 2px solid rgb(125 211 252 / 70%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 7%);
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  position: relative;
+  width: 40px;
+}
+
+.spoke {
+  background: rgb(148 163 184 / 80%);
+  border-radius: 999px;
+  display: block;
+  height: 2px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: 14px;
+}
+
+.spoke-0 { transform: translate(-50%, -50%) rotate(0deg) translateY(-12px); }
+.spoke-1 { transform: translate(-50%, -50%) rotate(90deg) translateY(-12px); }
+.spoke-2 { transform: translate(-50%, -50%) rotate(180deg) translateY(-12px); }
+.spoke-3 { transform: translate(-50%, -50%) rotate(270deg) translateY(-12px); }
+
+.hub {
+  background: #7dd3fc;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgb(125 211 252 / 80%);
+  height: 8px;
+  width: 8px;
+}
+
+.signal-cluster {
   display: flex;
   gap: 8px;
-  justify-content: space-between;
 }
 
-dd {
-  font-size: 12px;
+.signal-indicator {
+  align-items: center;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 50%;
+  color: #7a8794;
+  display: inline-flex;
+  font-size: 14px;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+.signal-indicator.active {
+  background: rgb(255 212 84 / 14%);
+  border-color: rgb(255 212 84 / 70%);
+  box-shadow: 0 0 12px rgb(255 212 84 / 35%);
+  color: #ffd460;
+}
+
+.telemetry-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin: 0;
+}
+
+.telemetry-card {
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  min-height: 52px;
+  padding: 7px 8px;
+}
+
+.telemetry-card.wide {
+  grid-column: span 2;
+}
+
+.telemetry-card dt {
+  color: #b8c4d1;
+  font-size: 9px;
+}
+
+.telemetry-card dd {
+  font-size: 11px;
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .telemetry-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .telemetry-hud {
+    max-width: 100%;
+  }
+
+  .hud-header,
+  .mini-metrics,
+  .telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hud-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

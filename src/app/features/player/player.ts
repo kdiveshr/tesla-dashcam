@@ -13,14 +13,18 @@ import { TeslaStore } from '../../core/services/tesla-store';
 import { Telemetry } from '../../core/services/telemetry';
 import { TeslaRecording } from '../../core/interfaces/tesla-recording.interface';
 import { TeslaTelemetrySample } from '../../core/interfaces/tesla-telemetry.interface';
+import { FsdPathService, FsdProjectedPoint } from '../../core/services/fsd-path';
+import { VideoExportService } from '../../core/services/video-export';
 import { CameraView } from './components/camera-view/camera-view';
-import { TelemetryHud } from './components/telemetry-hud/telemetry-hud';
 import { Timeline, TimelineClip } from './components/timeline/timeline';
+import { RouteMap } from './components/route-map/route-map';
+import { FsdPathOverlay } from './components/fsd-path-overlay/fsd-path-overlay';
+import { TelemetryHud } from './components/telemetry-hud/telemetry-hud';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CameraView, TelemetryHud, Timeline],
+  imports: [CameraView, Timeline, RouteMap, FsdPathOverlay, TelemetryHud],
   templateUrl: './player.html',
   styleUrl: './player.scss',
 })
@@ -34,6 +38,8 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
   duration = 0;
   timelineClips: TimelineClip[] = [];
   telemetrySample?: TeslaTelemetrySample;
+  telemetrySamples: TeslaTelemetrySample[] = [];
+  fsdPath: FsdProjectedPoint[] = [];
 
   @ViewChildren(CameraView)
   cameras!: QueryList<CameraView>;
@@ -50,10 +56,14 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
     private readonly teslaStore: TeslaStore,
     private readonly playback: Playback,
     private readonly telemetry: Telemetry,
+    private readonly fsdPathService: FsdPathService,
+    private readonly videoExportService: VideoExportService,
   ) {}
 
   ngOnInit(): void {
-    this.telemetrySubscription = this.telemetry.samples$.subscribe(() => {
+    this.telemetrySubscription = this.telemetry.samples$.subscribe(samples => {
+      this.telemetrySamples = samples;
+      this.fsdPath = this.fsdPathService.buildPredictedPath(samples, 6, 8);
       this.updateTelemetry();
     });
 
@@ -222,6 +232,21 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
 
   private updateTelemetry(): void {
     this.telemetrySample = this.telemetry.getSampleAtPlaybackTime(this.currentTime);
+    this.telemetry.setCurrentSample(this.telemetrySample);
+
+    const sample = this.telemetrySample ?? this.telemetrySamples.at(-1);
+    this.fsdPath = sample
+      ? this.fsdPathService.buildPredictedPath(this.telemetrySamples, 6, 8)
+      : [];
+  }
+
+  exportClip(): void {
+    if (!this.recording) {
+      return;
+    }
+
+    const source = this.frontSource;
+    void this.videoExportService.exportFrontCamera(source, this.fsdPath);
   }
 
   private startTimeline(): void {

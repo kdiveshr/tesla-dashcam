@@ -1,6 +1,46 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+.hud-panel {
+  border-bottom: 1px solid rgb(148 163 184 / 12%);
+  padding: 8px 12px 16px;
+}
+
+.hud-placeholder {
+  background: rgb(15 23 42 / 82%);
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 12px;
+  color: #dfeaff;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hud-label {
+  color: #86beff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hud-placeholder strong {
+  font-size: 16px;
+}
+
+.hud-placeholder small {
+  color: #b9c8d9;
+  line-height: 1.4;
+}
+
+app-telemetry-hud {
+  display: block;
+  width: 100%;
 }
 
 mat-nav-list {

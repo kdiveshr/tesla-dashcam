@@ -10,6 +10,10 @@
     <span class="recording-summary">{{ recording.segments.length }} synced segments</span>
   }
 </header>
+<div class="studio-row">
+  <app-telemetry-hud [sample]="telemetrySample" />
+</div>
+
 <app-timeline
   [currentTime]="currentTime"
   [duration]="duration"
@@ -35,6 +39,15 @@ Pause
 
 </button>
 
+<button
+  class="secondary-control"
+  type="button"
+  (click)="exportClip()">
+
+Export MP4
+
+</button>
+
 </div>
 
 @if (recording && recording.segments.length > 0) {
@@ -43,39 +56,39 @@ Pause
 <div class="player-stage">
   <div class="camera-grid">
 
+    <div class="front-panel">
+      <app-camera-view
+        label="Front"
+        [source]="frontSource"
+        (ended)="nextSegment()"
+        (metadataLoaded)="onCameraLoaded()"
+        (timeUpdated)="onMasterTimeUpdated($event)"
+      >
+      </app-camera-view>
+      <app-fsd-path-overlay [points]="fsdPath" />
+    </div>
 
-<app-camera-view
-  label="Front"
-  [source]="frontSource"
-  (ended)="nextSegment()"
-  (metadataLoaded)="onCameraLoaded()"
-  (timeUpdated)="onMasterTimeUpdated($event)"
-  >
-</app-camera-view>
+    <app-camera-view
+      label="Left Repeater"
+      (metadataLoaded)="onCameraLoaded()"
+      [source]="leftSource">
+    </app-camera-view>
 
-<app-camera-view
-  label="Left Repeater"
-  (metadataLoaded)="onCameraLoaded()"
-  [source]="leftSource">
-</app-camera-view>
+    <app-camera-view
+      label="Right Repeater"
+      (metadataLoaded)="onCameraLoaded()"
+      [source]="rightSource">
+    </app-camera-view>
 
-<app-camera-view
-  label="Right Repeater"
-  (metadataLoaded)="onCameraLoaded()"
-  [source]="rightSource">
-</app-camera-view>
+    <app-camera-view
+      label="Rear"
+      (metadataLoaded)="onCameraLoaded()"
+      [source]="rearSource">
+    </app-camera-view>
 
+  </div>
 
-<app-camera-view
-  label="Rear"
-  (metadataLoaded)="onCameraLoaded()"
-  [source]="rearSource">
-</app-camera-view>
-
-
-</div>
-
-  <app-telemetry-hud [sample]="telemetrySample" />
+  <app-route-map [samples]="telemetrySamples" [currentTime]="currentTime" />
 </div>
 
 

@@ -15,6 +15,9 @@ export class Telemetry {
   private readonly samplesSubject = new BehaviorSubject<TeslaTelemetrySample[]>([]);
   readonly samples$ = this.samplesSubject.asObservable();
 
+  private readonly currentSampleSubject = new BehaviorSubject<TeslaTelemetrySample | undefined>(undefined);
+  readonly currentSample$ = this.currentSampleSubject.asObservable();
+
   private readonly parsers: TelemetryParser[] = [new JsonTelemetryParser()];
   private importVersion = 0;
 
@@ -29,12 +32,12 @@ export class Telemetry {
       .sort((left, right) => left.timestamp.getTime() - right.timestamp.getTime());
 
     this.samplesSubject.next(samples);
+    this.currentSampleSubject.next(samples.at(-1) ?? undefined);
     return samples;
   }
 
   async importRecording(recording: TeslaRecording): Promise<TeslaTelemetrySample[]> {
     const version = ++this.importVersion;
-    this.samplesSubject.next([]);
     let timelineStartSeconds = 0;
     const samples: TeslaTelemetrySample[] = [];
 
@@ -59,6 +62,7 @@ export class Telemetry {
     }
 
     this.samplesSubject.next(samples);
+    this.currentSampleSubject.next(samples.at(-1) ?? undefined);
     return samples;
   }
 
@@ -87,8 +91,13 @@ export class Telemetry {
     return samples[0];
   }
 
+  setCurrentSample(sample?: TeslaTelemetrySample): void {
+    this.currentSampleSubject.next(sample);
+  }
+
   clear(): void {
     this.samplesSubject.next([]);
+    this.currentSampleSubject.next(undefined);
   }
 
   private async parseFile(file: File): Promise<TeslaTelemetrySample[]> {

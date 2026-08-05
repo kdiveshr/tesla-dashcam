@@ -1,8 +1,21 @@
 @if (sample) {
   <aside class="telemetry-hud" aria-label="Live vehicle telemetry">
-    <div class="speed">
-      <strong>{{ speedKph ?? '—' }}</strong>
-      <span>km/h</span>
+    <div class="hud-header">
+      <div class="speed-block">
+        <strong>{{ speedKph ?? '—' }}</strong>
+        <span>km/h</span>
+      </div>
+
+      <div class="mini-metrics">
+        <div class="mini-card">
+          <span class="label">Compass</span>
+          <strong>{{ compassLabel }}</strong>
+        </div>
+        <div class="mini-card">
+          <span class="label">Battery</span>
+          <strong>{{ batteryPercent ?? '—' }}%</strong>
+        </div>
+      </div>
     </div>
 
     <div class="status-row">
@@ -15,20 +28,41 @@
       }
     </div>
 
-    <dl>
-      <div>
+    <div class="steering-panel" aria-label="Steering visualization">
+      <div class="steering-wheel" [style.transform]="steeringVisual">
+        <div class="wheel-ring">
+          <span class="spoke spoke-0"></span>
+          <span class="spoke spoke-1"></span>
+          <span class="spoke spoke-2"></span>
+          <span class="spoke spoke-3"></span>
+          <div class="hub"></div>
+        </div>
+      </div>
+
+      <div class="signal-cluster" aria-label="Turn signals">
+        <span class="signal-indicator left" [class.active]="leftSignalActive || hazardSignalActive">◀</span>
+        <span class="signal-indicator right" [class.active]="rightSignalActive || hazardSignalActive">▶</span>
+      </div>
+    </div>
+
+    <dl class="telemetry-grid" aria-label="Telemetry cards">
+      <div class="telemetry-card">
         <dt>Steering</dt>
         <dd>{{ sample.steeringAngleDegrees ?? 0 | number:'1.0-1' }}°</dd>
       </div>
-      <div>
+      <div class="telemetry-card">
+        <dt>Heading</dt>
+        <dd>{{ headingDegrees ?? 0 | number:'1.0-1' }}°</dd>
+      </div>
+      <div class="telemetry-card">
         <dt>Accelerator</dt>
-        <dd>{{ sample.acceleratorPedal ?? 0 | number:'1.0-2' }}</dd>
+        <dd>{{ acceleratorValue | number:'1.0-2' }}</dd>
       </div>
-      <div>
+      <div class="telemetry-card">
         <dt>Brake</dt>
-        <dd [class.active]="sample.brakeApplied">{{ sample.brakeApplied ? 'ON' : 'OFF' }}</dd>
+        <dd [class.active]="sample.brakeApplied">{{ brakeStatus }}</dd>
       </div>
-      <div>
+      <div class="telemetry-card wide">
         <dt>GPS</dt>
         <dd>
           @if (sample.latitude !== undefined && sample.longitude !== undefined) {

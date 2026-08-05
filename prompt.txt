@@ -1,0 +1,344 @@
+here is my requirement 
+You are a senior full-stack engineer and software architect.
+
+Your goal is to build a production-quality Tesla Dashcam web application inspired by CamCut for iOS.
+
+This is NOT a prototype. Build clean, modular, maintainable code following Angular best practices.
+
+## Tech Stack
+
+Frontend
+- Angular 20 (standalone components)
+- TypeScript
+- SCSS
+- Angular Material
+- RxJS
+
+Future Libraries
+- Three.js
+- ffmpeg.wasm
+- WebCodecs
+- IndexedDB
+- Leaflet or MapLibre
+
+Backend
+- None initially.
+Everything should work locally inside the browser.
+
+
+
+---
+
+PROJECT GOAL
+
+Create a browser-based Tesla Dashcam viewer similar to CamCut.
+
+The application must eventually support:
+
+• Import TeslaCam folder
+• Parse Tesla folder structure
+• Detect RecentClips
+• Detect SavedClips
+• Detect SentryClips
+• Read all MP4 files
+• Parse Tesla filenames
+• Group synchronized camera videos
+• Four camera playback
+• Synchronized timeline
+• Play/Pause
+• Frame stepping
+• Playback speed
+• Video scrubbing
+• Clip trimming
+• Export MP4
+• Telemetry overlay
+• GPS map
+• Speed overlay
+• Steering wheel angle
+• Brake
+• Accelerator
+• Turn signals
+• Gear state
+• Autopilot state
+• FSD state
+• Battery percentage
+• Route visualization
+• Camera switching
+• Multi-camera layouts
+• HUD overlay
+• Blue predicted FSD driving path
+• Lane boundary rendering
+• Video export
+
+The UI should resemble professional video editing software.
+
+---
+
+IMPORTANT
+
+Do NOT implement everything at once.
+
+Build incrementally.
+
+After every completed milestone, stop and wait.
+
+Never skip steps.
+
+Never generate placeholder code.
+
+Every feature must compile and run before continuing.
+
+---
+
+PHASE 1
+
+Create the project architecture.
+
+Create all folders.
+
+Generate Angular standalone components.
+
+Generate services.
+
+Generate interfaces.
+
+Wire everything together.
+
+Replace Angular starter page.
+
+Create a dashboard shell.
+
+Create a sidebar.
+
+Create an upload page.
+
+Create routing.
+
+Make sure the application compiles.
+
+Stop.
+
+---
+
+PHASE 2
+
+Implement TeslaCam import.
+
+Allow selecting TeslaCam folder.
+
+Parse directory recursively.
+
+Read MP4 files.
+
+Store metadata.
+
+Display imported files.
+
+Stop.
+
+---
+
+PHASE 3
+
+Parse Tesla filenames.
+
+Example:
+
+2026-08-01_14-32-18-front.mp4
+
+Extract
+
+Timestamp
+
+Camera
+
+Clip type
+
+Group the four camera files into one synchronized event.
+
+Stop.
+
+---
+
+PHASE 4
+
+Create synchronized four-camera player.
+
+Front
+
+Rear
+
+Left repeater
+
+Right repeater
+
+Single play button controls all videos.
+
+Seeking updates all videos.
+
+Pause updates all videos.
+
+Frame stepping.
+
+Stop.
+
+---
+
+PHASE 5
+
+Create timeline.
+
+Show clips.
+
+Allow switching clips.
+
+Show timestamps.
+
+Zoom timeline.
+
+Stop.
+
+---
+
+PHASE 6
+
+Telemetry.
+
+Design parser architecture.
+
+Support speed.
+
+GPS.
+
+Steering angle.
+
+Autopilot state.
+
+Acceleration.
+
+Brake.
+
+Gear.
+
+Turn signals.
+
+Battery.
+
+Create overlay components.
+
+Stop.
+
+---
+
+PHASE 7
+
+Map.
+
+Show route.
+
+Animate vehicle position.
+
+Sync with playback.
+
+Stop.
+
+---
+
+PHASE 8
+
+Video overlays.
+
+Speedometer.
+
+Compass.
+
+HUD.
+
+Steering visualization.
+
+Turn signals.
+
+Battery.
+
+Telemetry cards.
+
+Stop.
+
+---
+
+PHASE 9
+
+Blue FSD Path.
+
+Research Tesla camera calibration.
+
+Implement camera projection.
+
+Project predicted vehicle path into front camera.
+
+Use steering angle and vehicle model if planner trajectory is unavailable.
+
+Render the path using Canvas/WebGL.
+
+Stop.
+
+---
+
+PHASE 10
+
+Video export.
+
+Render overlays.
+
+Encode MP4.
+
+Support multiple layouts.
+
+Stop.
+
+---
+
+Coding Standards
+
+Use interfaces everywhere.
+
+Use typed models.
+
+No "any".
+
+No duplicated code.
+
+Prefer Observables over shared mutable state.
+
+Separate parsing, rendering, playback, and UI into independent services.
+
+Comment complex algorithms.
+
+Write production-quality code.
+
+Use Angular Material.
+
+Create responsive layouts.
+
+Keep components under ~300 lines where practical.
+
+Use feature folders.
+
+---
+
+Every response should include:
+
+1. Files to create.
+2. Ubuntu terminal commands.
+3. Complete code.
+4. Explanation.
+5. Testing instructions.
+
+Never skip compilation errors.
+
+Never continue if there are TypeScript errors.
+
+Treat this like a commercial application.
+  i used another AI to complete till phase 8 HUD section. can you proceed with rest of the tasks
+
+
