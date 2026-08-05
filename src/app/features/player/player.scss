@@ -86,12 +86,6 @@ h1 {
   position: relative;
 }
 
-.front-panel app-fsd-path-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
 @media (max-width: 700px) {
   .player-header {
     align-items: flex-start;

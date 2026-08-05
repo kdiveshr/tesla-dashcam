@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { FsdProjectedPoint } from './fsd-path';
-
 @Injectable({ providedIn: 'root' })
 export class VideoExportService {
   async exportFrontCamera(
     source: string | undefined,
-    projectedPath: FsdProjectedPoint[] = [],
   ): Promise<void> {
     if (!source) {
       return;
@@ -72,7 +69,6 @@ export class VideoExportService {
 
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      this.drawFsdPath(context, canvas.width, canvas.height, projectedPath);
       rafId = requestAnimationFrame(renderFrame);
     };
 
@@ -110,38 +106,6 @@ export class VideoExportService {
       video.play();
       renderFrame();
     });
-  }
-
-  private drawFsdPath(
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    path: FsdProjectedPoint[],
-  ): void {
-    if (path.length < 2) {
-      return;
-    }
-
-    context.save();
-    context.beginPath();
-
-    path.forEach((point, index) => {
-      const x = width * 0.5 + point.x * 28;
-      const y = height * 0.72 - point.y * 18;
-
-      if (index === 0) {
-        context.moveTo(x, y);
-      } else {
-        context.lineTo(x, y);
-      }
-    });
-
-    context.strokeStyle = 'rgba(74, 156, 255, 1)';
-    context.lineWidth = 4;
-    context.shadowColor = 'rgba(74, 156, 255, 0.8)';
-    context.shadowBlur = 14;
-    context.stroke();
-    context.restore();
   }
 
   private getSupportedMimeType(): string | undefined {

@@ -1,223 +1,167 @@
 .telemetry-hud {
-  backdrop-filter: blur(8px);
-  background: rgb(9 16 24 / 82%);
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgb(8 12 20 / 38%);
-  color: #f8fbff;
-  display: grid;
-  gap: 10px;
-  max-width: 100%;
-  padding: 10px 12px;
+  background: rgb(10 17 27 / 88%);
+  border: 1px solid rgb(148 163 184 / 14%);
+  border-radius: 10px;
+  box-shadow: 0 12px 24px rgb(8 12 20 / 18%);
   box-sizing: border-box;
+  color: #edf6ff;
+  padding: 6px 10px;
   width: 100%;
 }
 
-.hud-header {
+.hud-line {
   align-items: center;
   display: flex;
+  gap: 10px;
   justify-content: space-between;
-  gap: 12px;
+  min-height: 42px;
 }
 
 .speed-block {
   align-items: baseline;
   display: flex;
-  gap: 6px;
+  gap: 4px;
+  min-width: 104px;
 }
 
 .speed-block strong {
-  font-size: clamp(20px, 2vw, 28px);
+  font-size: clamp(20px, 2.2vw, 28px);
   line-height: 1;
 }
 
-.speed-block span,
-.label,
-dt {
-  color: #b8c4d1;
+.speed-block span {
+  color: #9eb9d3;
   font-size: 10px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.mini-metrics {
+.hud-meta {
+  align-items: center;
   display: flex;
-  gap: 6px;
-}
-
-.mini-card {
-  background: rgb(255 255 255 / 7%);
-  border: 1px solid rgb(255 255 255 / 12%);
-  border-radius: 8px;
-  display: grid;
-  min-width: 74px;
-  padding: 5px 8px;
-}
-
-.mini-card strong {
-  font-size: 12px;
-}
-
-.status-row {
-  display: flex;
+  flex: 1;
   flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
 }
 
-.badge {
-  background: rgb(255 255 255 / 14%);
-  border-radius: 4px;
+.meta-pill {
+  background: rgb(255 255 255 / 7%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  color: #dce9f7;
   font-size: 10px;
   font-weight: 700;
-  padding: 3px 6px;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  text-transform: uppercase;
 }
 
-.autopilot {
-  background: #1b5e9d;
+.meta-pill.accent {
+  background: rgb(118 190 255 / 18%);
+  border-color: rgb(118 190 255 / 30%);
+  color: #cfe9ff;
 }
 
-.signal,
-dd.active {
-  color: #ffd460;
+.meta-pill.ghost {
+  color: #b1c6dd;
 }
 
 .steering-panel {
   align-items: center;
-  background: rgb(255 255 255 / 4%);
-  border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: 10px;
   display: flex;
-  justify-content: space-between;
   gap: 8px;
-  padding: 8px 10px;
+  justify-content: flex-end;
+  margin-left: auto;
+  min-width: 98px;
 }
 
 .steering-wheel {
   align-items: center;
   display: flex;
-  height: 44px;
+  height: 28px;
   justify-content: center;
   transition: transform 120ms ease-out;
-  width: 44px;
+  width: 28px;
 }
 
 .wheel-ring {
   align-items: center;
-  background: radial-gradient(circle, rgb(18 29 37) 0%, rgb(10 18 27) 62%, rgb(24 33 43) 100%);
-  border: 2px solid rgb(125 211 252 / 70%);
+  background: radial-gradient(circle, rgb(15 28 39) 0%, rgb(15 24 34) 70%, rgb(6 12 19) 100%);
+  border: 1px solid rgb(125 211 252 / 70%);
   border-radius: 50%;
-  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 7%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 7%);
   display: flex;
-  height: 40px;
+  height: 24px;
   justify-content: center;
   position: relative;
-  width: 40px;
+  width: 24px;
 }
 
 .spoke {
   background: rgb(148 163 184 / 80%);
   border-radius: 999px;
   display: block;
-  height: 2px;
+  height: 1.5px;
   left: 50%;
   position: absolute;
   top: 50%;
-  width: 14px;
+  width: 9px;
 }
 
-.spoke-0 { transform: translate(-50%, -50%) rotate(0deg) translateY(-12px); }
-.spoke-1 { transform: translate(-50%, -50%) rotate(90deg) translateY(-12px); }
-.spoke-2 { transform: translate(-50%, -50%) rotate(180deg) translateY(-12px); }
-.spoke-3 { transform: translate(-50%, -50%) rotate(270deg) translateY(-12px); }
+.spoke-0 { transform: translate(-50%, -50%) rotate(0deg) translateY(-8px); }
+.spoke-1 { transform: translate(-50%, -50%) rotate(90deg) translateY(-8px); }
+.spoke-2 { transform: translate(-50%, -50%) rotate(180deg) translateY(-8px); }
+.spoke-3 { transform: translate(-50%, -50%) rotate(270deg) translateY(-8px); }
 
 .hub {
   background: #7dd3fc;
   border-radius: 50%;
-  box-shadow: 0 0 12px rgb(125 211 252 / 80%);
-  height: 8px;
-  width: 8px;
+  box-shadow: 0 0 8px rgb(125 211 252 / 80%);
+  height: 5px;
+  width: 5px;
 }
 
 .signal-cluster {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .signal-indicator {
   align-items: center;
-  background: rgb(255 255 255 / 6%);
+  background: rgb(255 255 255 / 4%);
   border: 1px solid rgb(255 255 255 / 12%);
   border-radius: 50%;
   color: #7a8794;
   display: inline-flex;
-  font-size: 14px;
-  height: 24px;
+  font-size: 11px;
+  height: 18px;
   justify-content: center;
-  width: 24px;
+  width: 18px;
 }
 
 .signal-indicator.active {
   background: rgb(255 212 84 / 14%);
   border-color: rgb(255 212 84 / 70%);
-  box-shadow: 0 0 12px rgb(255 212 84 / 35%);
+  box-shadow: 0 0 8px rgb(255 212 84 / 30%);
   color: #ffd460;
 }
 
-.telemetry-grid {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: 0;
-}
-
-.telemetry-card {
-  background: rgb(255 255 255 / 5%);
-  border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: 8px;
-  display: grid;
-  gap: 4px;
-  min-height: 52px;
-  padding: 7px 8px;
-}
-
-.telemetry-card.wide {
-  grid-column: span 2;
-}
-
-.telemetry-card dt {
-  color: #b8c4d1;
-  font-size: 9px;
-}
-
-.telemetry-card dd {
-  font-size: 11px;
-  margin: 0;
-}
-
-@media (max-width: 980px) {
-  .telemetry-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 700px) {
-  .telemetry-hud {
-    max-width: 100%;
-  }
-
-  .hud-header,
-  .mini-metrics,
-  .telemetry-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hud-header {
-    flex-direction: column;
+  .hud-line {
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .telemetry-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .speed-block {
+    min-width: 0;
+  }
+
+  .hud-meta {
+    justify-content: flex-start;
+  }
+
+  .steering-panel {
+    margin-left: 0;
   }
 }

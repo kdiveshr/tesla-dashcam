@@ -14,44 +14,7 @@
   <app-telemetry-hud [sample]="telemetrySample" />
 </div>
 
-<app-timeline
-  [currentTime]="currentTime"
-  [duration]="duration"
-  [clips]="timelineClips"
-  (seek)="seek($event)">
-</app-timeline>
-<div class="controls">
-
-<button
-  class="primary-control"
-  (click)="play()">
-
-Play
-
-</button>
-
-
-<button
-  class="secondary-control"
-  (click)="pause()">
-
-Pause
-
-</button>
-
-<button
-  class="secondary-control"
-  type="button"
-  (click)="exportClip()">
-
-Export MP4
-
-</button>
-
-</div>
-
 @if (recording && recording.segments.length > 0) {
-
 
 <div class="player-stage">
   <div class="camera-grid">
@@ -65,7 +28,6 @@ Export MP4
         (timeUpdated)="onMasterTimeUpdated($event)"
       >
       </app-camera-view>
-      <app-fsd-path-overlay [points]="fsdPath" />
     </div>
 
     <app-camera-view
@@ -88,9 +50,21 @@ Export MP4
 
   </div>
 
+  <app-timeline
+    [currentTime]="currentTime"
+    [duration]="duration"
+    [clips]="timelineClips"
+    (seek)="seek($event)">
+  </app-timeline>
+
+  <div class="controls">
+    <button class="primary-control" (click)="play()">Play</button>
+    <button class="secondary-control" (click)="pause()">Pause</button>
+    <button class="secondary-control" type="button" (click)="exportClip()">Export MP4</button>
+  </div>
+
   <app-route-map [samples]="telemetrySamples" [currentTime]="currentTime" />
 </div>
-
 
 }
 

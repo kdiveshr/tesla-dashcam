@@ -1,12 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 
 import { TeslaTelemetrySample } from '../../../../core/interfaces/tesla-telemetry.interface';
 
 @Component({
   selector: 'app-telemetry-hud',
   standalone: true,
-  imports: [DecimalPipe],
   templateUrl: './telemetry-hud.html',
   styleUrl: './telemetry-hud.scss',
 })

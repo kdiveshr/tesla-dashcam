@@ -1,10 +1,10 @@
 .timeline {
-  background: rgb(13 29 49 / 72%);
-  border: 1px solid rgb(148 163 184 / 15%);
-  border-radius: 12px;
+  background: rgb(12 22 35 / 82%);
+  border: 1px solid rgb(148 163 184 / 12%);
+  border-radius: 10px;
   display: grid;
-  gap: 8px;
-  padding: 10px 12px 12px;
+  gap: 6px;
+  padding: 8px 10px 10px;
   width: 100%;
 }
 
@@ -21,29 +21,31 @@
 .time {
   color: #dce9f7;
   font-feature-settings: 'tnum';
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .zoom-controls {
-  gap: 8px;
+  gap: 6px;
 }
 
 .zoom-controls button {
-  background: rgb(148 163 184 / 10%);
-  border: 1px solid rgb(148 163 184 / 22%);
+  background: rgb(148 163 184 / 8%);
+  border: 1px solid rgb(148 163 184 / 18%);
   border-radius: 6px;
   color: #dce9f7;
   cursor: pointer;
-  font-size: 18px;
-  height: 28px;
+  font-size: 16px;
+  height: 24px;
   line-height: 1;
-  width: 28px;
+  width: 24px;
 }
 
 .zoom-label {
   color: #91a4bd;
-  font-size: 11px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .zoom-controls button:disabled {
@@ -53,11 +55,12 @@
 
 mat-slider {
   width: 100%;
+  margin-bottom: 2px;
 }
 
 .clip-scroll {
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
 }
 
 .clip-track {
@@ -65,26 +68,25 @@ mat-slider {
     90deg,
     transparent 0,
     transparent 59px,
-    rgb(148 163 184 / 16%) 60px
+    rgb(148 163 184 / 12%) 60px
   );
-  height: 42px;
+  height: 28px;
   min-width: 100%;
   position: relative;
 }
 
 .clip {
-  align-items: flex-start;
-  background: rgb(49 92 139 / 58%);
-  border: 1px solid rgb(134 184 236 / 32%);
+  align-items: center;
+  background: rgb(49 92 139 / 60%);
+  border: 1px solid rgb(134 184 236 / 30%);
   bottom: 0;
   color: #d8ecff;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  justify-content: center;
+  gap: 4px;
+  justify-content: flex-start;
   overflow: hidden;
-  padding: 3px 6px;
+  padding: 2px 5px;
   position: absolute;
   text-align: left;
   top: 0;
@@ -92,9 +94,9 @@ mat-slider {
 
 .clip:hover,
 .clip:focus-visible {
-  background: rgb(67 125 184 / 84%);
-  outline: 2px solid #83c2ff;
-  outline-offset: -2px;
+  background: rgb(67 125 184 / 78%);
+  outline: 1px solid #83c2ff;
+  outline-offset: -1px;
   z-index: 1;
 }
 
@@ -106,11 +108,12 @@ mat-slider {
 }
 
 .clip-index {
+  font-size: 10px;
   font-weight: 700;
 }
 
 .clip-time {
-  font-size: 11px;
+  font-size: 10px;
   white-space: nowrap;
 }
 
