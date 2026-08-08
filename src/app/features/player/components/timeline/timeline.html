@@ -1,20 +1,28 @@
 <section class="timeline" aria-label="Recording timeline">
   <div class="timeline-header">
-    <div class="time">
-      {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+    <div class="time-group">
+      <button type="button" class="transport-toggle" (click)="onTogglePlayback()" aria-label="Toggle play or pause">
+        {{ isPlaying ? '❚❚' : '▶' }}
+      </button>
+
+      <div class="slider-shell">
+        <mat-slider min="0" [max]="duration" [disabled]="duration === 0">
+          <input matSliderThumb [value]="currentTime" (valueChange)="onSeek($event)" />
+        </mat-slider>
+      </div>
+
+      <div class="time">
+        {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+      </div>
     </div>
 
     <div class="zoom-controls" aria-label="Timeline zoom">
-      <span class="zoom-label">Timeline zoom</span>
+      <span class="zoom-label">Zoom</span>
       <button type="button" (click)="zoomOut()" [disabled]="zoom <= 0.5">−</button>
       <span>{{ zoom }}×</span>
       <button type="button" (click)="zoomIn()" [disabled]="zoom >= 8">+</button>
     </div>
   </div>
-
-  <mat-slider min="0" [max]="duration" [disabled]="duration === 0">
-    <input matSliderThumb [value]="currentTime" (valueChange)="onSeek($event)" />
-  </mat-slider>
 
   <div class="clip-scroll">
     <div class="clip-track" [style.width.px]="trackWidth">

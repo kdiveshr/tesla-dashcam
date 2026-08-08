@@ -9,6 +9,7 @@
 }
 
 .timeline-header,
+.time-group,
 .zoom-controls {
   align-items: center;
   display: flex;
@@ -16,6 +17,39 @@
 
 .timeline-header {
   justify-content: space-between;
+  gap: 10px;
+}
+
+.time-group {
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+}
+
+.transport-toggle {
+  align-items: center;
+  background: rgb(112 189 255 / 12%);
+  border: 1px solid rgb(112 189 255 / 30%);
+  border-radius: 8px;
+  color: #dff3ff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  height: 26px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 26px;
+  padding: 0;
+}
+
+.slider-shell {
+  flex: 1;
+  min-width: 120px;
+}
+
+.slider-shell mat-slider {
+  width: 100%;
 }
 
 .time {
@@ -23,6 +57,7 @@
   font-feature-settings: 'tnum';
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .zoom-controls {
@@ -35,15 +70,15 @@
   border-radius: 6px;
   color: #dce9f7;
   cursor: pointer;
-  font-size: 16px;
-  height: 24px;
+  font-size: 14px;
+  height: 22px;
   line-height: 1;
-  width: 24px;
+  width: 22px;
 }
 
 .zoom-label {
   color: #91a4bd;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -51,11 +86,6 @@
 .zoom-controls button:disabled {
   cursor: default;
   opacity: 0.45;
-}
-
-mat-slider {
-  width: 100%;
-  margin-bottom: 2px;
 }
 
 .clip-scroll {
@@ -70,7 +100,7 @@ mat-slider {
     transparent 59px,
     rgb(148 163 184 / 12%) 60px
   );
-  height: 28px;
+  height: 32px;
   min-width: 100%;
   position: relative;
 }
@@ -118,6 +148,15 @@ mat-slider {
 }
 
 @media (max-width: 560px) {
+  .timeline-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .time-group {
+    width: 100%;
+  }
+
   .zoom-label {
     display: none;
   }

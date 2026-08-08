@@ -339,6 +339,6 @@ Never skip compilation errors.
 Never continue if there are TypeScript errors.
 
 Treat this like a commercial application.
-  i used another AI to complete till phase 8 HUD section. can you proceed with rest of the tasks
+  i used another AI to complete till phase 8.
 
 

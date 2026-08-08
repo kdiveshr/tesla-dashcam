@@ -6,6 +6,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { Playback } from '../../core/services/playback';
@@ -13,7 +14,7 @@ import { TeslaStore } from '../../core/services/tesla-store';
 import { Telemetry } from '../../core/services/telemetry';
 import { TeslaRecording } from '../../core/interfaces/tesla-recording.interface';
 import { TeslaTelemetrySample } from '../../core/interfaces/tesla-telemetry.interface';
-import { VideoExportService } from '../../core/services/video-export';
+import { ExportLayout, VideoExportService } from '../../core/services/video-export';
 import { CameraView } from './components/camera-view/camera-view';
 import { Timeline, TimelineClip } from './components/timeline/timeline';
 import { RouteMap } from './components/route-map/route-map';
@@ -22,7 +23,7 @@ import { TelemetryHud } from './components/telemetry-hud/telemetry-hud';
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CameraView, Timeline, RouteMap, TelemetryHud],
+  imports: [CameraView, Timeline, RouteMap, TelemetryHud, FormsModule],
   templateUrl: './player.html',
   styleUrl: './player.scss',
 })
@@ -37,6 +38,16 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
   timelineClips: TimelineClip[] = [];
   telemetrySample?: TeslaTelemetrySample;
   telemetrySamples: TeslaTelemetrySample[] = [];
+  isPlaying = false;
+
+  // Phase 9 & Phase 10 state
+  showFsdPath = true;
+  showExportModal = false;
+  exportLayout: ExportLayout = 'front';
+  exportIncludeTelemetry = true;
+  exportIncludeFsdPath = true;
+  isExporting = false;
+  exportProgress = 0;
 
   @ViewChildren(CameraView)
   cameras!: QueryList<CameraView>;
@@ -101,14 +112,73 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
     this.playback.clear();
   }
 
+  toggleFsdPath(): void {
+    this.showFsdPath = !this.showFsdPath;
+  }
+
+  openExportModal(): void {
+    this.showExportModal = true;
+  }
+
+  closeExportModal(): void {
+    if (!this.isExporting) {
+      this.showExportModal = false;
+    }
+  }
+
+  async startExport(): Promise<void> {
+    if (!this.recording || this.isExporting) {
+      return;
+    }
+
+    this.isExporting = true;
+    this.exportProgress = 0;
+
+    try {
+      await this.videoExportService.exportVideo(
+        {
+          front: this.frontSource,
+          left: this.leftSource,
+          right: this.rightSource,
+          rear: this.rearSource,
+        },
+        {
+          layout: this.exportLayout,
+          includeTelemetryHud: this.exportIncludeTelemetry,
+          includeFsdPath: this.exportIncludeFsdPath,
+          telemetrySample: this.telemetrySample,
+          onProgress: progress => {
+            this.exportProgress = progress;
+          },
+        },
+      );
+    } catch (err) {
+      console.error('Video export failed:', err);
+    } finally {
+      this.isExporting = false;
+      this.showExportModal = false;
+    }
+  }
+
   play(): void {
+    this.isPlaying = true;
     void this.playback.play();
     this.startTimeline();
   }
 
   pause(): void {
+    this.isPlaying = false;
     this.playback.pause();
     this.stopTimeline();
+  }
+
+  togglePlayback(): void {
+    if (this.isPlaying) {
+      this.pause();
+      return;
+    }
+
+    this.play();
   }
 
   seek(time: number): void {
@@ -228,15 +298,6 @@ export class Player implements OnInit, AfterViewInit, OnDestroy {
   private updateTelemetry(): void {
     this.telemetrySample = this.telemetry.getSampleAtPlaybackTime(this.currentTime);
     this.telemetry.setCurrentSample(this.telemetrySample);
-  }
-
-  exportClip(): void {
-    if (!this.recording) {
-      return;
-    }
-
-    const source = this.frontSource;
-    void this.videoExportService.exportFrontCamera(source);
   }
 
   private startTimeline(): void {

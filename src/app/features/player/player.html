@@ -1,15 +1,29 @@
 <section class="player">
 
-
 <header class="player-header">
-  <div>
+  <div class="player-title-wrap">
     <p class="eyebrow">EDITING STUDIO</p>
-    <h1>{{ recording?.folderName ?? 'TeslaCam player' }}</h1>
+    <h1>{{ recording?.folderName ?? 'TeslaCam Player' }}</h1>
   </div>
-  @if (recording) {
-    <span class="recording-summary">{{ recording.segments.length }} synced segments</span>
-  }
+
+  <div class="header-actions">
+    @if (recording) {
+      <span class="recording-summary">{{ recording.segments.length }} synced segments</span>
+    }
+
+    <button
+      class="fsd-toggle-button"
+      [class.active]="showFsdPath"
+      type="button"
+      (click)="toggleFsdPath()"
+    >
+      <span class="dot"></span> FSD Path Overlay
+    </button>
+
+    <button class="export-button" type="button" (click)="openExportModal()">Export MP4</button>
+  </div>
 </header>
+
 <div class="studio-row">
   <app-telemetry-hud [sample]="telemetrySample" />
 </div>
@@ -23,6 +37,8 @@
       <app-camera-view
         label="Front"
         [source]="frontSource"
+        [sample]="telemetrySample"
+        [showFsdPath]="showFsdPath"
         (ended)="nextSegment()"
         (metadataLoaded)="onCameraLoaded()"
         (timeUpdated)="onMasterTimeUpdated($event)"
@@ -54,28 +70,90 @@
     [currentTime]="currentTime"
     [duration]="duration"
     [clips]="timelineClips"
-    (seek)="seek($event)">
+    [isPlaying]="isPlaying"
+    (seek)="seek($event)"
+    (togglePlayback)="togglePlayback()">
   </app-timeline>
-
-  <div class="controls">
-    <button class="primary-control" (click)="play()">Play</button>
-    <button class="secondary-control" (click)="pause()">Pause</button>
-    <button class="secondary-control" type="button" (click)="exportClip()">Export MP4</button>
-  </div>
 
   <app-route-map [samples]="telemetrySamples" [currentTime]="currentTime" />
 </div>
 
 }
 
-
 @else {
-
-<p>
-No Tesla clips loaded.
-</p>
-
+  <p class="empty-notice">No Tesla clips loaded. Select a folder to import clips.</p>
 }
 
+<!-- Multi-Layout Export Modal -->
+@if (showExportModal) {
+  <div class="modal-backdrop" (click)="closeExportModal()">
+    <div class="export-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>EXPORT TESLA DASHCAM VIDEO</h2>
+        <button class="close-btn" [disabled]="isExporting" (click)="closeExportModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <label class="section-label">Select Export Layout:</label>
+        <div class="layout-grid">
+          <div
+            class="layout-card"
+            [class.selected]="exportLayout === 'front'"
+            (click)="exportLayout = 'front'"
+          >
+            <div class="layout-icon front-icon"></div>
+            <span>Front Camera Only</span>
+          </div>
+
+          <div
+            class="layout-card"
+            [class.selected]="exportLayout === 'quad-grid'"
+            (click)="exportLayout = 'quad-grid'"
+          >
+            <div class="layout-icon quad-icon"></div>
+            <span>4-Camera Quad Grid</span>
+          </div>
+
+          <div
+            class="layout-card"
+            [class.selected]="exportLayout === 'pip'"
+            (click)="exportLayout = 'pip'"
+          >
+            <div class="layout-icon pip-icon"></div>
+            <span>Picture-in-Picture</span>
+          </div>
+        </div>
+
+        <div class="options-section">
+          <label class="checkbox-option">
+            <input type="checkbox" [(ngModel)]="exportIncludeTelemetry" />
+            <span>Burn-in Telemetry HUD (Speedometer, Gear, Steer, AP Status)</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input type="checkbox" [(ngModel)]="exportIncludeFsdPath" />
+            <span>Burn-in Dynamic Blue FSD Path Overlay</span>
+          </label>
+        </div>
+
+        @if (isExporting) {
+          <div class="export-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="exportProgress"></div>
+            </div>
+            <p class="progress-text">Exporting Video Clip... {{ exportProgress }}%</p>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" [disabled]="isExporting" (click)="closeExportModal()">Cancel</button>
+        <button class="btn-primary" [disabled]="isExporting" (click)="startExport()">
+          {{ isExporting ? 'Exporting...' : 'Start Download' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 </section>

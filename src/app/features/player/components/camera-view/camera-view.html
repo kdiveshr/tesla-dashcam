@@ -1,33 +1,23 @@
 <div class="camera-container">
+  <div class="camera-header">
+    <h3>{{ label }}</h3>
+  </div>
 
-  <h3>
-    {{ label }}
-  </h3>
+  <div class="video-wrapper">
+    @if (source) {
+      <video
+        #video
+        [src]="source"
+        (loadedmetadata)="onMetadataLoaded()"
+        (timeupdate)="onTimeUpdate()"
+        (ended)="onEnded()">
+      </video>
 
-
-  @if (source) {
-
-  
-
-  <video
-  #video
-  [src]="source"
-  (loadedmetadata)="onMetadataLoaded()"
-  (timeupdate)="onTimeUpdate()"
-  (ended)="onEnded()">
-</video>
-
-
-
-  }
-
-
-  @else {
-
-    <div class="empty">
-      No video
-    </div>
-
-  }
-
+      @if (showFsdPath) {
+        <app-fsd-path [sample]="sample" [enabled]="true" />
+      }
+    } @else {
+      <div class="empty">No video available</div>
+    }
+  </div>
 </div>

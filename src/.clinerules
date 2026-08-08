@@ -1,0 +1,7 @@
+# Terminal Command Rules
+
+- Never wrap shell commands in square brackets `[ ]` when passing them to terminal execution tools.
+- Send raw shell strings directly.
+  - BAD: `[ls -la "/path/to/folder"]`
+  - GOOD: `ls -la "/path/to/folder"`
+- In `zsh`, square brackets trigger file globbing (`no matches found` error). Keep brackets out of executable command strings.

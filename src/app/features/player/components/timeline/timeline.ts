@@ -39,8 +39,14 @@ export class Timeline {
   @Input()
   clips: TimelineClip[] = [];
 
+  @Input()
+  isPlaying = false;
+
   @Output()
   seek = new EventEmitter<number>();
+
+  @Output()
+  togglePlayback = new EventEmitter<void>();
 
   zoom = 1;
 
@@ -71,6 +77,10 @@ export class Timeline {
 
   onSeek(value: number): void {
     this.seek.emit(value);
+  }
+
+  onTogglePlayback(): void {
+    this.togglePlayback.emit();
   }
 
   selectClip(clip: TimelineClip): void {
