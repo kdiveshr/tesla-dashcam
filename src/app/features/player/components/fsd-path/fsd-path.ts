@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TeslaTelemetrySample } from '../../../../core/interfaces/tesla-telemetry.interface';
-import { FsdPathCalculator, Point2D } from '../../../../core/services/fsd-path-calculator';
+import { FsdPathCalculator, PathRibbon, Point2D } from '../../../../core/services/fsd-path-calculator';
 
 @Component({
   selector: 'app-fsd-path',
@@ -20,7 +20,6 @@ import { FsdPathCalculator, Point2D } from '../../../../core/services/fsd-path-c
 export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sample?: TeslaTelemetrySample;
   @Input() enabled = true;
-  @Input() showLaneBoundaries = true;
 
   @ViewChild('canvas') canvasRef?: ElementRef<HTMLCanvasElement>;
 
@@ -32,9 +31,7 @@ export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef?.nativeElement;
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
     const container = canvas.parentElement;
     if (container) {
@@ -50,82 +47,60 @@ export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['sample'] || changes['enabled'] || changes['showLaneBoundaries']) {
+    if (changes['sample'] || changes['enabled']) {
       this.render();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-    }
+    if (this.animationId) cancelAnimationFrame(this.animationId);
     this.resizeObserver?.disconnect();
   }
 
   render(): void {
     const canvas = this.canvasRef?.nativeElement;
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
+    if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!this.enabled) return;
 
-    if (!this.enabled) {
-      return;
-    }
+    const ribbon = this.pathCalculator.calculatePath(
+      this.sample,
+      canvas.width,
+      canvas.height,
+    );
 
-    const ribbon = this.pathCalculator.calculatePath(this.sample, canvas.width, canvas.height);
+    // Halted, or path too short to draw — render nothing. This is the
+    // single source of truth for "no path at a stop": the calculator
+    // returns an empty ribbon below the speed threshold, and we bail here.
+    if (ribbon.polygon.length < 3) return;
 
-    if (ribbon.polygon.length < 3) {
-      return;
-    }
+    const isBraking = this.sample?.brakeApplied === true;
 
-    // 1. Draw Glowing FSD Path Ribbon Fill
+    // ---------- Banded chevron ribbon (the stripes ARE the path) ----------
+    this.drawChevronRibbon(ctx, ribbon, isBraking);
+
+    // ---------- Clean outline around the whole ribbon ----------
     ctx.save();
     ctx.beginPath();
     const [first, ...rest] = ribbon.polygon;
     ctx.moveTo(first.x, first.y);
-    for (const pt of rest) {
-      ctx.lineTo(pt.x, pt.y);
-    }
+    for (const pt of rest) ctx.lineTo(pt.x, pt.y);
     ctx.closePath();
-
-    const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height * 0.3);
-    gradient.addColorStop(0, 'rgba(0, 217, 255, 0.55)');
-    gradient.addColorStop(0.6, 'rgba(0, 162, 255, 0.35)');
-    gradient.addColorStop(1, 'rgba(0, 120, 255, 0.05)');
-
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Ribbon Stroke/Glow
-    ctx.strokeStyle = '#00e5ff';
-    ctx.lineWidth = 2.5;
-    ctx.shadowColor = '#00e5ff';
-    ctx.shadowBlur = 12;
+    ctx.strokeStyle = isBraking ? 'rgba(120, 190, 255, 0.45)' : 'rgba(140, 210, 255, 0.60)';
+    ctx.lineWidth = 1.25;
+    ctx.shadowColor = 'rgba(0, 120, 200, 0.3)';
+    ctx.shadowBlur = 1;
     ctx.stroke();
     ctx.restore();
-
-    // 2. Draw Lane Boundaries if enabled
-    if (this.showLaneBoundaries) {
-      this.drawDashedBoundary(ctx, ribbon.leftBoundary);
-      this.drawDashedBoundary(ctx, ribbon.rightBoundary);
-    }
-
-    // 3. Draw Moving Directional Chevrons
-    this.drawChevrons(ctx, ribbon.centerPath);
   }
 
   private updateCanvasSize(): void {
     const canvas = this.canvasRef?.nativeElement;
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
       canvas.width = rect.width;
@@ -134,66 +109,100 @@ export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private startAnimationLoop(): void {
-    const speedKph = this.sample?.speedKph ?? 20;
-    const speedFactor = Math.max(0.5, speedKph / 10.0);
-    this.animOffset = (this.animOffset + speedFactor * 0.04) % 1.0;
+    const speedKph = this.sample?.speedKph ?? 0;
+
+    if (speedKph >= 1.8) {
+      const isBraking = this.sample?.brakeApplied === true;
+      // Braking should read as an obvious, unmistakable change: the band
+      // pattern visibly slows its forward scroll almost to a crawl, rather
+      // than a subtle opacity tweak.
+      const brakeFactor = isBraking ? 0.12 : 1.0;
+      const speedFactor = Math.max(0.05, (speedKph / 75) * brakeFactor);
+      this.animOffset = (this.animOffset + speedFactor * 0.03) % 1.0;
+    }
 
     this.render();
     this.animationId = requestAnimationFrame(() => this.startAnimationLoop());
   }
 
-  private drawDashedBoundary(ctx: CanvasRenderingContext2D, points: Point2D[]): void {
-    if (points.length < 2) {
-      return;
-    }
+  /**
+   * Draws the path as a continuous strip of large chevron-shaped bands,
+   * alternating between a darker and lighter blue, tiled edge-to-edge with
+   * no gaps — matching Tesla's actual FSD visualization style. The bands
+   * themselves are shaped like chevrons (both the near and far edge of each
+   * band are pulled forward into a "^" point along the direction of travel)
+   * rather than drawing separate small arrow glyphs on top of a plain fill.
+   */
+  private drawChevronRibbon(
+    ctx: CanvasRenderingContext2D,
+    ribbon: PathRibbon,
+    isBraking: boolean,
+  ): void {
+    const { leftBoundary: left, rightBoundary: right, centerPath: center } = ribbon;
+    const n = center.length;
+    if (n < 4) return;
+
+    // Number of depth-samples per stripe. Lower = more, tighter stripes.
+    const bandSize = 5;
+    // How far the chevron point is pulled forward relative to its edge —
+    // controls how "pointy" each band looks. ~55% of a band's depth reads
+    // close to the reference image.
+    const apexPull = Math.max(1, Math.round(bandSize * 0.55));
+
+    // Scroll the band pattern forward over time so it reads as motion,
+    // exactly like the previous per-chevron animation did.
+    const scrollOffset = Math.floor(this.animOffset * bandSize);
+
+    const colorDark: [number, number, number, number] = isBraking
+      ? [15, 60, 130, 0.60]
+      : [8, 80, 190, 0.62];
+    const colorLight: [number, number, number, number] = isBraking
+      ? [70, 140, 220, 0.78]
+      : [70, 165, 255, 0.85];
+
+    const rgba = (c: [number, number, number, number], mult: number) =>
+      `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${(c[3] * mult).toFixed(3)})`;
 
     ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
-    }
-    ctx.setLineDash([12, 8]);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-    ctx.lineWidth = 2;
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 8;
-    ctx.stroke();
-    ctx.restore();
-  }
+    // Removed the heavy glow — on a solid opaque fill it reads as a light
+    // source hovering above the road rather than paint on the asphalt.
+    // A thin, tight shadow is enough to keep edges crisp without a halo.
+    ctx.shadowColor = 'rgba(0, 120, 200, 0.4)';
+    ctx.shadowBlur = 1;
 
-  private drawChevrons(ctx: CanvasRenderingContext2D, centerPath: Point2D[]): void {
-    if (centerPath.length < 4) {
-      return;
-    }
+    let bandIndex = 0;
+    for (let i = -scrollOffset; i < n - 1; i += bandSize) {
+      const near = Math.max(0, i);
+      const far = Math.min(n - 1, i + bandSize);
+      if (far <= near) continue;
 
-    ctx.save();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.shadowColor = '#00f0ff';
-    ctx.shadowBlur = 10;
+      const nearApexIdx = Math.min(n - 1, near + apexPull);
+      const farApexIdx = Math.min(n - 1, far + apexPull);
 
-    const chevronSpacing = 4; // every N points
-    const offsetIndex = Math.floor(this.animOffset * chevronSpacing);
+      const nearApex: Point2D = center[nearApexIdx];
+      const farApex: Point2D = center[farApexIdx];
 
-    for (let i = offsetIndex; i < centerPath.length - 2; i += chevronSpacing) {
-      const pt = centerPath[i];
-      const nextPt = centerPath[i + 1];
+      // Depth-based fade: bands further from the camera get noticeably
+      // dimmer, the way a flat surface receding into the dark actually
+      // would. Without this every band is equally bright regardless of
+      // distance, which is a strong "flat sticker over the video" cue
+      // rather than "lying on the ground receding away from you".
+      const depthT = far / (n - 1); // 0 = at camera, 1 = at path's far end
+      const fade = 1 - Math.pow(depthT, 1.4) * 0.72; // keep at least ~28% near the far tip
 
-      const angle = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x);
-      const size = Math.max(6, 18 - (i * 0.3)); // scale smaller toward horizon
-
-      ctx.save();
-      ctx.translate(pt.x, pt.y);
-      ctx.rotate(angle);
+      ctx.fillStyle = rgba(bandIndex % 2 === 0 ? colorDark : colorLight, fade);
 
       ctx.beginPath();
-      ctx.moveTo(-size * 0.6, -size * 0.5);
-      ctx.lineTo(size * 0.4, 0);
-      ctx.lineTo(-size * 0.6, size * 0.5);
-      ctx.stroke();
+      ctx.moveTo(left[near].x, left[near].y);
+      ctx.lineTo(nearApex.x, nearApex.y);
+      ctx.lineTo(right[near].x, right[near].y);
+      ctx.lineTo(right[far].x, right[far].y);
+      ctx.lineTo(farApex.x, farApex.y);
+      ctx.lineTo(left[far].x, left[far].y);
+      ctx.closePath();
+      ctx.fill();
 
-      ctx.restore();
+      bandIndex++;
     }
 
     ctx.restore();
