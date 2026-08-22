@@ -20,6 +20,13 @@ import { FsdPathCalculator, PathRibbon, Point2D } from '../../../../core/service
 export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sample?: TeslaTelemetrySample;
   @Input() enabled = true;
+  /**
+   * The next ~4-6 seconds of telemetry samples after `sample`, sorted by
+   * time ascending. Used to draw the path from the vehicle's actual
+   * recorded GPS trajectory instead of guessing it from steering angle.
+   * Slice this from your full trip log based on current playback time.
+   */
+  @Input() futureSamples: TeslaTelemetrySample[] = [];
 
   @ViewChild('canvas') canvasRef?: ElementRef<HTMLCanvasElement>;
 
@@ -47,7 +54,7 @@ export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['sample'] || changes['enabled']) {
+    if (changes['sample'] || changes['enabled'] || changes['futureSamples']) {
       this.render();
     }
   }
@@ -71,6 +78,8 @@ export class FsdPath implements AfterViewInit, OnChanges, OnDestroy {
       this.sample,
       canvas.width,
       canvas.height,
+      undefined,
+      this.futureSamples,
     );
 
     // Halted, or path too short to draw — render nothing. This is the
